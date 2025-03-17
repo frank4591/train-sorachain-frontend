@@ -1,4 +1,3 @@
-
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -6,7 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { BlurredCard } from "@/components/ui/blurred-card";
-import { ChevronRight, GitHub, BrainCircuit, Cpu, Server } from "lucide-react";
+import { ChevronRight, Github, BrainCircuit, Cpu, Server } from "lucide-react";
 
 export default function Index() {
   const { isAuthenticated } = useAuth();
@@ -112,7 +111,7 @@ export default function Index() {
             </Link>
             <a href="#" target="_blank" rel="noopener noreferrer">
               <Button variant="outline" size="lg" className="rounded-full">
-                <GitHub className="mr-1 h-4 w-4" />
+                <Github className="mr-1 h-4 w-4" />
                 View on GitHub
               </Button>
             </a>
