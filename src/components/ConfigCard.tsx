@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { Task } from "@/lib/constants";
 import { useAuth } from "@/context/AuthContext";
 import { motion, AnimatePresence } from "framer-motion";
-import { FileCode, Download, ChevronDown } from "lucide-react";
+import { FileCode, Download, ChevronDown, Terminal } from "lucide-react";
 import { toast } from "sonner";
 
 interface ConfigCardProps {
@@ -58,7 +58,7 @@ export default function ConfigCard({ tasks, className }: ConfigCardProps) {
                 <div>
                   <p className="text-sm font-medium">{task.title}</p>
                   <p className="text-xs text-muted-foreground">
-                    Role: {user?.taskRoles[task.id]}
+                    Role: <span className="capitalize">{user?.taskRoles[task.id]}</span>
                   </p>
                 </div>
                 <ChevronDown 
@@ -84,9 +84,19 @@ export default function ConfigCard({ tasks, className }: ConfigCardProps) {
                         <span className="font-mono">{task.config}</span>
                       </div>
                       
+                      <div className="mt-3 p-2 bg-background border border-border rounded-md">
+                        <div className="flex items-center text-xs text-muted-foreground mb-1">
+                          <Terminal className="h-3 w-3 mr-1" />
+                          <span>CLI command:</span>
+                        </div>
+                        <code className="block text-xs font-mono p-2 bg-muted/50 rounded">
+                          sorachain run --task={task.id} --role={user?.taskRoles[task.id]} --config={task.config}
+                        </code>
+                      </div>
+                      
                       <Button 
                         size="sm" 
-                        className="w-full text-xs mt-2"
+                        className="w-full text-xs mt-3"
                         onClick={() => downloadConfig(task)}
                       >
                         <Download className="h-3 w-3 mr-1" /> 

@@ -8,19 +8,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { ArrowRight, CheckCircle, Clock, AlertCircle, Download, Shield } from "lucide-react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import StakeTaskDialog from "@/components/StakeTaskDialog";
 
 interface TaskCardProps {
   task: Task;
@@ -28,11 +16,9 @@ interface TaskCardProps {
 }
 
 export default function TaskCard({ task, className }: TaskCardProps) {
-  const { user, updateUserData } = useAuth();
+  const { user } = useAuth();
   const [expanded, setExpanded] = useState(false);
-  const [selectedRole, setSelectedRole] = useState<UserRole | null>(
-    user?.taskRoles[task.id] || null
-  );
+  const [stakeDialogOpen, setStakeDialogOpen] = useState(false);
   
   const isStaked = user?.stakedTasks.includes(task.id) || false;
   const hasEnoughCredits = (user?.credits || 0) >= task.requiredCredits;
@@ -51,32 +37,6 @@ export default function TaskCard({ task, className }: TaskCardProps) {
     "failed": <AlertCircle className="h-4 w-4" />
   };
   
-  const handleStake = () => {
-    if (!user) return;
-    
-    if (!selectedRole) {
-      toast.error("Please select a role for this task");
-      return;
-    }
-    
-    if (!hasEnoughCredits) {
-      toast.error(`Not enough credits. Required: ${task.requiredCredits}`);
-      return;
-    }
-    
-    const newCredits = user.credits - task.requiredCredits;
-    const newStakedTasks = [...user.stakedTasks, task.id];
-    const newTaskRoles = { ...user.taskRoles, [task.id]: selectedRole };
-    
-    updateUserData({
-      credits: newCredits,
-      stakedTasks: newStakedTasks,
-      taskRoles: newTaskRoles
-    });
-    
-    toast.success(`Successfully staked for task as ${selectedRole}`);
-  };
-
   const downloadConfig = () => {
     if (!task.config) {
       toast.error("No configuration file available for this task");
@@ -187,22 +147,8 @@ export default function TaskCard({ task, className }: TaskCardProps) {
         <div className="p-4 bg-muted/30 border-t border-border">
           <div className="flex justify-between items-center">
             {!isStaked ? (
-              <div className="flex-1 mr-3">
-                <Select 
-                  value={selectedRole || undefined} 
-                  onValueChange={(value) => setSelectedRole(value as UserRole)}
-                >
-                  <SelectTrigger className="w-full text-xs h-9">
-                    <SelectValue placeholder="Select a role" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {task.availableRoles.map((role) => (
-                      <SelectItem key={role} value={role} className="capitalize">
-                        {role}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+              <div className="text-xs text-muted-foreground">
+                {task.availableRoles.length} roles available
               </div>
             ) : (
               <div className="flex items-center text-xs text-muted-foreground">
@@ -213,14 +159,20 @@ export default function TaskCard({ task, className }: TaskCardProps) {
             
             <Button 
               size="sm"
-              disabled={isStaked || !hasEnoughCredits || !selectedRole}
-              onClick={handleStake}
+              onClick={() => setStakeDialogOpen(true)}
+              disabled={isStaked || !hasEnoughCredits}
             >
               {isStaked ? "Staked" : "Stake Credits"}
             </Button>
           </div>
         </div>
       </BlurredCard>
+      
+      <StakeTaskDialog 
+        task={task}
+        open={stakeDialogOpen}
+        onOpenChange={setStakeDialogOpen}
+      />
     </motion.div>
   );
 }
