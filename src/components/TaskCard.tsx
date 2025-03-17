@@ -2,18 +2,25 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { Task } from "@/lib/constants";
+import { Task, UserRole } from "@/lib/constants";
 import { BlurredCard } from "@/components/ui/blurred-card";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
-import { ArrowRight, CheckCircle, Clock, AlertCircle } from "lucide-react";
+import { ArrowRight, CheckCircle, Clock, AlertCircle, Download, Shield } from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface TaskCardProps {
   task: Task;
@@ -23,10 +30,12 @@ interface TaskCardProps {
 export default function TaskCard({ task, className }: TaskCardProps) {
   const { user, updateUserData } = useAuth();
   const [expanded, setExpanded] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<UserRole | null>(
+    user?.taskRoles[task.id] || null
+  );
   
   const isStaked = user?.stakedTasks.includes(task.id) || false;
   const hasEnoughCredits = (user?.credits || 0) >= task.requiredCredits;
-  const isCorrectRole = user?.role === task.requiredRole;
   
   const statusColors = {
     "available": "text-green-500",
@@ -45,8 +54,8 @@ export default function TaskCard({ task, className }: TaskCardProps) {
   const handleStake = () => {
     if (!user) return;
     
-    if (!isCorrectRole) {
-      toast.error(`This task requires a ${task.requiredRole} role`);
+    if (!selectedRole) {
+      toast.error("Please select a role for this task");
       return;
     }
     
@@ -57,13 +66,25 @@ export default function TaskCard({ task, className }: TaskCardProps) {
     
     const newCredits = user.credits - task.requiredCredits;
     const newStakedTasks = [...user.stakedTasks, task.id];
+    const newTaskRoles = { ...user.taskRoles, [task.id]: selectedRole };
     
     updateUserData({
       credits: newCredits,
-      stakedTasks: newStakedTasks
+      stakedTasks: newStakedTasks,
+      taskRoles: newTaskRoles
     });
     
-    toast.success("Successfully staked for task");
+    toast.success(`Successfully staked for task as ${selectedRole}`);
+  };
+
+  const downloadConfig = () => {
+    if (!task.config) {
+      toast.error("No configuration file available for this task");
+      return;
+    }
+    
+    // In a real app, this would download the actual file
+    toast.success(`Downloading configuration: ${task.config}`);
   };
   
   return (
@@ -93,8 +114,9 @@ export default function TaskCard({ task, className }: TaskCardProps) {
               <h3 className="text-lg font-medium">{task.title}</h3>
             </div>
             {isStaked && (
-              <div className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-md">
-                Staked
+              <div className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-md flex items-center">
+                <Shield className="h-3 w-3 mr-1" />
+                <span>Staked as {user?.taskRoles[task.id]}</span>
               </div>
             )}
           </div>
@@ -102,19 +124,19 @@ export default function TaskCard({ task, className }: TaskCardProps) {
           <div className="mt-4 space-y-4">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center">
-                <span className="text-muted-foreground mr-1">Role:</span>
-                <span className="font-medium capitalize">{task.requiredRole}</span>
-              </div>
-              <div className="flex items-center">
                 <span className="text-muted-foreground mr-1">Required:</span>
                 <span className="font-medium">{task.requiredCredits} credits</span>
+              </div>
+              <div className="flex items-center">
+                <span className="text-muted-foreground mr-1">Reward:</span>
+                <span className="font-medium">{task.creditReward} credits</span>
               </div>
             </div>
             
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center">
-                <span className="text-muted-foreground mr-1">Reward:</span>
-                <span className="font-medium">{task.creditReward} credits</span>
+                <span className="text-muted-foreground mr-1">Roles:</span>
+                <span className="font-medium capitalize">{task.availableRoles.join(", ")}</span>
               </div>
               <Button
                 variant="ghost"
@@ -143,6 +165,20 @@ export default function TaskCard({ task, className }: TaskCardProps) {
                   <span>Start: {task.startDate}</span>
                   <span>End: {task.endDate}</span>
                 </div>
+                
+                {isStaked && task.config && (
+                  <div className="mt-3 pt-3 border-t border-border">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      className="w-full text-xs"
+                      onClick={downloadConfig}
+                    >
+                      <Download className="h-3 w-3 mr-1" />
+                      Download Configuration
+                    </Button>
+                  </div>
+                )}
               </motion.div>
             )}
           </div>
@@ -150,37 +186,34 @@ export default function TaskCard({ task, className }: TaskCardProps) {
         
         <div className="p-4 bg-muted/30 border-t border-border">
           <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-2">
-              {!isCorrectRole && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <AlertCircle className="h-4 w-4 text-yellow-500" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Role mismatch. You are a {user?.role}, this requires {task.requiredRole}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-              
-              {!hasEnoughCredits && (
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger>
-                      <AlertCircle className="h-4 w-4 text-red-500" />
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p>Not enough credits. Need {task.requiredCredits}, you have {user?.credits || 0}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              )}
-            </div>
+            {!isStaked ? (
+              <div className="flex-1 mr-3">
+                <Select 
+                  value={selectedRole || undefined} 
+                  onValueChange={(value) => setSelectedRole(value as UserRole)}
+                >
+                  <SelectTrigger className="w-full text-xs h-9">
+                    <SelectValue placeholder="Select a role" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {task.availableRoles.map((role) => (
+                      <SelectItem key={role} value={role} className="capitalize">
+                        {role}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            ) : (
+              <div className="flex items-center text-xs text-muted-foreground">
+                <Clock className="h-3 w-3 mr-1" />
+                <span>Staked on {new Date().toLocaleDateString()}</span>
+              </div>
+            )}
             
             <Button 
               size="sm"
-              disabled={isStaked || !hasEnoughCredits || !isCorrectRole}
+              disabled={isStaked || !hasEnoughCredits || !selectedRole}
               onClick={handleStake}
             >
               {isStaked ? "Staked" : "Stake Credits"}

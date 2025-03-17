@@ -9,16 +9,16 @@ import CreditDisplay from "@/components/CreditDisplay";
 import TaskCard from "@/components/TaskCard";
 import AuthKeyCard from "@/components/AuthKeyCard";
 import { MOCK_TASKS } from "@/lib/constants";
+import { Button } from "@/components/ui/button";
 import {
-  BarChart3,
-  CircleUser,
-  Key,
   List,
-  Table,
   LayoutGrid,
-  Wallet,
   BrainCircuit,
+  Download,
+  FileCode,
+  TerminalSquare
 } from "lucide-react";
+import ConfigCard from "@/components/ConfigCard";
 
 export default function Dashboard() {
   const { user } = useAuth();
@@ -31,10 +31,16 @@ export default function Dashboard() {
   
   const tasks = getTasks();
   
-  const tasksByRole = tasks.filter(task => task.requiredRole === user?.role);
-  const tasksByStaked = user?.stakedTasks
+  // Filter tasks that the user has staked on
+  const stakedTasks = user?.stakedTasks
     ? tasks.filter(task => user.stakedTasks.includes(task.id))
     : [];
+  
+  // Filter active tasks (available or in_progress)
+  const activeTasks = tasks.filter(task => ["available", "in_progress"].includes(task.status));
+  
+  // Filter completed tasks
+  const completedTasks = tasks.filter(task => task.status === "completed");
   
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -97,24 +103,24 @@ export default function Dashboard() {
                     <div>
                       <h2 className="text-xl font-medium">AI Training Platform</h2>
                       <p className="text-sm text-muted-foreground">
-                        Your role: <span className="font-medium capitalize">{user?.role}</span>
+                        Select tasks and roles to participate in training
                       </p>
                     </div>
                   </div>
                 </div>
                 
                 <div className="p-6">
-                  <Tabs defaultValue="all" className="w-full">
+                  <Tabs defaultValue="active" className="w-full">
                     <div className="flex items-center justify-between mb-6">
                       <TabsList>
-                        <TabsTrigger value="all" className="text-xs">
-                          All Tasks
-                        </TabsTrigger>
-                        <TabsTrigger value="my-role" className="text-xs">
-                          For My Role
+                        <TabsTrigger value="active" className="text-xs">
+                          Active Tasks
                         </TabsTrigger>
                         <TabsTrigger value="staked" className="text-xs">
-                          Staked
+                          My Staked Tasks
+                        </TabsTrigger>
+                        <TabsTrigger value="completed" className="text-xs">
+                          Completed Tasks
                         </TabsTrigger>
                       </TabsList>
                       
@@ -138,7 +144,7 @@ export default function Dashboard() {
                       </div>
                     </div>
                     
-                    <TabsContent value="all">
+                    <TabsContent value="active">
                       <motion.div
                         variants={containerVariants}
                         initial="hidden"
@@ -149,40 +155,15 @@ export default function Dashboard() {
                             : "space-y-4"
                         }
                       >
-                        {tasks.map((task) => (
+                        {activeTasks.map((task) => (
                           <motion.div key={task.id} variants={itemVariants}>
                             <TaskCard task={task} />
                           </motion.div>
                         ))}
                         
-                        {tasks.length === 0 && (
+                        {activeTasks.length === 0 && (
                           <div className="text-center py-12 col-span-full">
-                            <p className="text-muted-foreground">No tasks available at the moment</p>
-                          </div>
-                        )}
-                      </motion.div>
-                    </TabsContent>
-                    
-                    <TabsContent value="my-role">
-                      <motion.div
-                        variants={containerVariants}
-                        initial="hidden"
-                        animate="visible"
-                        className={
-                          viewMode === "grid"
-                            ? "grid grid-cols-1 md:grid-cols-2 gap-6"
-                            : "space-y-4"
-                        }
-                      >
-                        {tasksByRole.map((task) => (
-                          <motion.div key={task.id} variants={itemVariants}>
-                            <TaskCard task={task} />
-                          </motion.div>
-                        ))}
-                        
-                        {tasksByRole.length === 0 && (
-                          <div className="text-center py-12 col-span-full">
-                            <p className="text-muted-foreground">No tasks available for your role</p>
+                            <p className="text-muted-foreground">No active tasks available at the moment</p>
                           </div>
                         )}
                       </motion.div>
@@ -199,15 +180,40 @@ export default function Dashboard() {
                             : "space-y-4"
                         }
                       >
-                        {tasksByStaked.map((task) => (
+                        {stakedTasks.map((task) => (
                           <motion.div key={task.id} variants={itemVariants}>
                             <TaskCard task={task} />
                           </motion.div>
                         ))}
                         
-                        {tasksByStaked.length === 0 && (
+                        {stakedTasks.length === 0 && (
                           <div className="text-center py-12 col-span-full">
                             <p className="text-muted-foreground">You haven't staked for any tasks yet</p>
+                          </div>
+                        )}
+                      </motion.div>
+                    </TabsContent>
+                    
+                    <TabsContent value="completed">
+                      <motion.div
+                        variants={containerVariants}
+                        initial="hidden"
+                        animate="visible"
+                        className={
+                          viewMode === "grid"
+                            ? "grid grid-cols-1 md:grid-cols-2 gap-6"
+                            : "space-y-4"
+                        }
+                      >
+                        {completedTasks.map((task) => (
+                          <motion.div key={task.id} variants={itemVariants}>
+                            <TaskCard task={task} />
+                          </motion.div>
+                        ))}
+                        
+                        {completedTasks.length === 0 && (
+                          <div className="text-center py-12 col-span-full">
+                            <p className="text-muted-foreground">No completed tasks yet</p>
                           </div>
                         )}
                       </motion.div>
@@ -225,6 +231,10 @@ export default function Dashboard() {
             >
               <CreditDisplay />
               <AuthKeyCard />
+              
+              {stakedTasks.length > 0 && (
+                <ConfigCard tasks={stakedTasks} />
+              )}
             </motion.div>
           </div>
         </div>

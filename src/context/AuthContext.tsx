@@ -57,7 +57,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         credits: 100,
         authKey: generateAuthKey(),
         tasks: [],
-        stakedTasks: []
+        stakedTasks: [],
+        taskRoles: {}
       };
       
       setUser(userData);
@@ -89,7 +90,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         credits: 50, // Starting credits
         authKey: generateAuthKey(),
         tasks: [],
-        stakedTasks: []
+        stakedTasks: [],
+        taskRoles: {}
       };
       
       setUser(userData);

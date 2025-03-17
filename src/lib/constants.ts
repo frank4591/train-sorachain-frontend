@@ -26,16 +26,21 @@ export const ROLES: { id: UserRole; name: string; description: string }[] = [
 
 export type TaskStatus = "available" | "in_progress" | "completed" | "failed";
 
+export type TaskRoleMap = {
+  [taskId: string]: UserRole;
+};
+
 export type Task = {
   id: string;
   title: string;
   description: string;
-  requiredRole: UserRole;
-  creditReward: number;
   requiredCredits: number;
+  creditReward: number;
   status: TaskStatus;
   startDate: string;
   endDate: string;
+  availableRoles: UserRole[];
+  config?: string;
 };
 
 export type UserData = {
@@ -47,6 +52,7 @@ export type UserData = {
   authKey: string;
   tasks: string[]; // IDs of assigned tasks
   stakedTasks: string[]; // IDs of tasks the user has staked for
+  taskRoles: TaskRoleMap; // Map of taskId -> role
 };
 
 // Mock tasks
@@ -55,45 +61,49 @@ export const MOCK_TASKS: Task[] = [
     id: "task-1",
     title: "Model Training: Sentiment Analysis",
     description: "Train a sentiment analysis model on GitHub issue comments",
-    requiredRole: "validator",
+    availableRoles: ["validator", "aggregator", "delegator"],
     creditReward: 250,
     requiredCredits: 100,
     status: "available",
     startDate: "2023-10-15",
-    endDate: "2023-10-30"
+    endDate: "2023-10-30",
+    config: "sentiment-analysis-config.yaml"
   },
   {
     id: "task-2",
     title: "Code Generation Fine-Tuning",
     description: "Fine-tune code generation model with GitHub repositories",
-    requiredRole: "client",
+    availableRoles: ["client", "validator", "delegator"],
     creditReward: 400,
     requiredCredits: 150,
     status: "available",
     startDate: "2023-10-20",
-    endDate: "2023-11-10"
+    endDate: "2023-11-10",
+    config: "code-gen-config.yaml"
   },
   {
     id: "task-3",
     title: "Model Weight Aggregation",
     description: "Aggregate model weights from distributed training",
-    requiredRole: "aggregator",
+    availableRoles: ["aggregator", "validator"],
     creditReward: 350,
     requiredCredits: 200,
     status: "in_progress",
     startDate: "2023-10-05",
-    endDate: "2023-10-25"
+    endDate: "2023-10-25",
+    config: "weight-aggregation-config.yaml"
   },
   {
     id: "task-4",
     title: "Compute Resource Delegation",
     description: "Delegate GPU compute for distributed training",
-    requiredRole: "delegator",
+    availableRoles: ["delegator", "client"],
     creditReward: 300,
     requiredCredits: 100,
     status: "available",
     startDate: "2023-10-25",
-    endDate: "2023-11-15"
+    endDate: "2023-11-15",
+    config: "gpu-delegation-config.yaml"
   }
 ];
 
