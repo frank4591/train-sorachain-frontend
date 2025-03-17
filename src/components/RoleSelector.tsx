@@ -57,5 +57,3 @@ function RoleCard({ role, isSelected, onSelect }: RoleCardProps) {
     </motion.div>
   );
 }
-
-<lov-add-dependency>framer-motion@latest</lov-add-dependency>
