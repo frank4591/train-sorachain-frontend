@@ -11,6 +11,8 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import Profile from "./pages/Profile";
 import Explore from "./pages/Explore";
+import StakeToEarn from "./pages/StakeToEarn";
+import StakeToDevelop from "./pages/StakeToDevelop";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -29,6 +31,8 @@ const App = () => (
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/explore" element={<Explore />} />
+            <Route path="/stake-to-earn" element={<StakeToEarn />} />
+            <Route path="/stake-to-develop" element={<StakeToDevelop />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>

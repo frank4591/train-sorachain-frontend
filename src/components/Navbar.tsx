@@ -13,7 +13,8 @@ import {
   Home,
   Globe,
   Wallet,
-  Code
+  Code,
+  Search
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,12 +26,20 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { NAVIGATION_LINKS } from "@/lib/constants";
+import { Input } from "@/components/ui/input";
 
 export default function Navbar() {
   const { user, logout, isAuthenticated } = useAuth();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [showSearch, setShowSearch] = useState(false);
   const location = useLocation();
+
+  // Don't render navbar on authenticated routes except for the home page
+  const isHomePage = location.pathname === '/';
+  if (isAuthenticated && !isHomePage) {
+    return null;
+  }
 
   useEffect(() => {
     const handleScroll = () => {
@@ -120,6 +129,26 @@ export default function Navbar() {
 
         {/* User Menu or Login/Register Buttons */}
         <div className="hidden md:flex items-center space-x-4">
+          {showSearch && (
+            <div className="relative">
+              <Input 
+                type="search" 
+                placeholder="Search..." 
+                className="h-9 pr-8" 
+              />
+              <Search className="h-4 w-4 absolute right-3 top-2.5 text-muted-foreground" />
+            </div>
+          )}
+          
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            onClick={() => setShowSearch(!showSearch)}
+            className="h-9 w-9"
+          >
+            <Search className="h-4 w-4" />
+          </Button>
+          
           {isAuthenticated && (
             <div className="flex items-center mr-4">
               <CreditCard className="h-4 w-4 mr-2 text-primary" />

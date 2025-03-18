@@ -1,3 +1,4 @@
+
 import { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -5,7 +6,7 @@ import { useAuth } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 import { Button } from "@/components/ui/button";
 import { BlurredCard } from "@/components/ui/blurred-card";
-import { ChevronRight, Github, BrainCircuit, Cpu, Server } from "lucide-react";
+import { ChevronRight, Github, BrainCircuit, Cpu, Server, Database, Network, Shield } from "lucide-react";
 
 export default function Index() {
   const { isAuthenticated } = useAuth();
@@ -38,6 +39,33 @@ export default function Index() {
       y: 0,
       opacity: 1,
       transition: { duration: 0.5 }
+    }
+  };
+  
+  const circleVariants = {
+    hidden: { scale: 0, opacity: 0 },
+    visible: {
+      scale: 1, 
+      opacity: 1,
+      transition: { duration: 0.8, ease: "easeOut" }
+    }
+  };
+  
+  const lineVariants = {
+    hidden: { pathLength: 0, opacity: 0 },
+    visible: {
+      pathLength: 1,
+      opacity: 1,
+      transition: { duration: 1.5, ease: "easeInOut" }
+    }
+  };
+  
+  const nodeVariants = {
+    hidden: { scale: 0, opacity: 0 },
+    visible: {
+      scale: 1,
+      opacity: 1,
+      transition: { type: "spring", stiffness: 200, damping: 10 }
     }
   };
   
@@ -116,6 +144,150 @@ export default function Index() {
               </Button>
             </a>
           </motion.div>
+        </motion.div>
+        
+        {/* Animated Blockchain AI Network Diagram */}
+        <motion.div
+          className="mt-16 relative"
+          initial="hidden"
+          animate="visible"
+          variants={containerVariants}
+        >
+          <div className="relative h-[400px] w-[600px] max-w-full">
+            {/* Base Blockchain Layer */}
+            <motion.div 
+              className="absolute bottom-0 left-0 right-0 h-16 bg-primary/10 backdrop-blur-sm rounded-lg flex items-center justify-center z-10"
+              variants={itemVariants}
+            >
+              <Database className="h-6 w-6 text-primary mr-2" />
+              <span className="font-semibold text-primary">Blockchain Layer</span>
+            </motion.div>
+            
+            {/* AI Layer */}
+            <motion.div 
+              className="absolute bottom-32 left-0 right-0 h-16 bg-blue-500/10 backdrop-blur-sm rounded-lg flex items-center justify-center z-10"
+              variants={itemVariants}
+            >
+              <BrainCircuit className="h-6 w-6 text-blue-500 mr-2" />
+              <span className="font-semibold text-blue-500">AI Layer</span>
+            </motion.div>
+            
+            {/* Connection Line from Blockchain to AI Layer */}
+            <svg className="absolute inset-0 w-full h-full z-0" viewBox="0 0 600 400">
+              <motion.line 
+                x1="300" y1="384" x2="300" y2="288" 
+                stroke="hsl(var(--primary))" 
+                strokeWidth="2" 
+                strokeDasharray="5,5"
+                variants={lineVariants}
+              />
+            </svg>
+            
+            {/* Nodes */}
+            <motion.div 
+              className="absolute left-[25%] top-[35%] h-16 w-16 flex items-center justify-center"
+              variants={nodeVariants}
+              transition={{ delay: 1 }}
+            >
+              <div className="absolute inset-0 rounded-full bg-green-100 animate-pulse"></div>
+              <Server className="h-8 w-8 text-green-600 z-10 relative" />
+              <span className="absolute -bottom-8 text-xs font-medium whitespace-nowrap">Trainer Node</span>
+            </motion.div>
+            
+            <motion.div 
+              className="absolute left-[50%] top-[30%] h-16 w-16 flex items-center justify-center"
+              variants={nodeVariants}
+              transition={{ delay: 1.2 }}
+            >
+              <div className="absolute inset-0 rounded-full bg-purple-100 animate-pulse"></div>
+              <Cpu className="h-8 w-8 text-purple-600 z-10 relative" />
+              <span className="absolute -bottom-8 text-xs font-medium whitespace-nowrap">Aggregator Node</span>
+            </motion.div>
+            
+            <motion.div 
+              className="absolute left-[75%] top-[35%] h-16 w-16 flex items-center justify-center"
+              variants={nodeVariants}
+              transition={{ delay: 1.4 }}
+            >
+              <div className="absolute inset-0 rounded-full bg-amber-100 animate-pulse"></div>
+              <Shield className="h-8 w-8 text-amber-600 z-10 relative" />
+              <span className="absolute -bottom-8 text-xs font-medium whitespace-nowrap">Validator Node</span>
+            </motion.div>
+            
+            {/* Connection Lines between nodes */}
+            <svg className="absolute inset-0 w-full h-full z-0" viewBox="0 0 600 400">
+              <motion.line 
+                x1="150" y1="180" x2="300" y2="150" 
+                stroke="#9333ea" 
+                strokeWidth="2" 
+                strokeDasharray="5,5"
+                variants={lineVariants}
+                transition={{ delay: 1.6 }}
+              />
+              <motion.line 
+                x1="300" y1="150" x2="450" y2="180" 
+                stroke="#9333ea" 
+                strokeWidth="2" 
+                strokeDasharray="5,5"
+                variants={lineVariants}
+                transition={{ delay: 1.8 }}
+              />
+              <motion.line 
+                x1="150" y1="180" x2="450" y2="180" 
+                stroke="#9333ea" 
+                strokeWidth="2" 
+                strokeDasharray="5,5"
+                variants={lineVariants}
+                transition={{ delay: 2 }}
+              />
+            </svg>
+            
+            {/* Animated Data Flow */}
+            <motion.div
+              className="absolute left-[20%] top-[40%] h-3 w-3 rounded-full bg-primary"
+              animate={{
+                x: [0, 140, 280],
+                opacity: [1, 1, 0],
+              }}
+              transition={{
+                duration: 3,
+                repeat: Infinity,
+                repeatType: "loop",
+                ease: "linear",
+                delay: 3
+              }}
+            />
+            
+            <motion.div
+              className="absolute left-[50%] top-[35%] h-3 w-3 rounded-full bg-blue-500"
+              animate={{
+                x: [0, 120],
+                opacity: [1, 1, 0],
+              }}
+              transition={{
+                duration: 2.5,
+                repeat: Infinity,
+                repeatType: "loop",
+                ease: "linear",
+                delay: 3.5
+              }}
+            />
+            
+            <motion.div
+              className="absolute left-[70%] top-[40%] h-3 w-3 rounded-full bg-amber-500"
+              animate={{
+                x: [-120, 0],
+                opacity: [0, 1, 1],
+              }}
+              transition={{
+                duration: 2.5,
+                repeat: Infinity,
+                repeatType: "loop",
+                ease: "linear",
+                delay: 4
+              }}
+            />
+          </div>
         </motion.div>
         
         <motion.div
