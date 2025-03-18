@@ -1,8 +1,7 @@
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
-import Navbar from "@/components/Navbar";
 import { BlurredCard } from "@/components/ui/blurred-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CreditDisplay from "@/components/CreditDisplay";
@@ -22,15 +21,15 @@ import ConfigCard from "@/components/ConfigCard";
 export default function Dashboard() {
   const { user } = useAuth();
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
   
-  const getTasks = () => {
-    // In a real app, these would be filtered by user role or other criteria
-    return MOCK_TASKS;
-  };
+  const refreshTasks = useCallback(() => {
+    setRefreshTrigger(prev => prev + 1);
+  }, []);
   
-  const tasks = getTasks();
+  const tasks = MOCK_TASKS;
   
-  // Filter tasks that the user has staked on
+  // Memoize filtered tasks to avoid unnecessary re-renders
   const stakedTasks = user?.stakedTasks
     ? tasks.filter(task => user.stakedTasks.includes(task.id))
     : [];
@@ -63,8 +62,6 @@ export default function Dashboard() {
   
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
-      
       <div className="pt-24 pb-16 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="mb-8">
@@ -145,6 +142,7 @@ export default function Dashboard() {
                     
                     <TabsContent value="active">
                       <motion.div
+                        key={`active-${refreshTrigger}`}
                         variants={containerVariants}
                         initial="hidden"
                         animate="visible"
@@ -156,7 +154,10 @@ export default function Dashboard() {
                       >
                         {activeTasks.map((task) => (
                           <motion.div key={task.id} variants={itemVariants}>
-                            <TaskCard task={task} />
+                            <TaskCard 
+                              task={task} 
+                              onRefresh={refreshTasks}
+                            />
                           </motion.div>
                         ))}
                         
@@ -170,6 +171,7 @@ export default function Dashboard() {
                     
                     <TabsContent value="staked">
                       <motion.div
+                        key={`staked-${refreshTrigger}`}
                         variants={containerVariants}
                         initial="hidden"
                         animate="visible"
@@ -181,7 +183,10 @@ export default function Dashboard() {
                       >
                         {stakedTasks.map((task) => (
                           <motion.div key={task.id} variants={itemVariants}>
-                            <TaskCard task={task} />
+                            <TaskCard 
+                              task={task}
+                              onRefresh={refreshTasks}
+                            />
                           </motion.div>
                         ))}
                         
@@ -195,6 +200,7 @@ export default function Dashboard() {
                     
                     <TabsContent value="completed">
                       <motion.div
+                        key={`completed-${refreshTrigger}`}
                         variants={containerVariants}
                         initial="hidden"
                         animate="visible"
@@ -206,7 +212,10 @@ export default function Dashboard() {
                       >
                         {completedTasks.map((task) => (
                           <motion.div key={task.id} variants={itemVariants}>
-                            <TaskCard task={task} />
+                            <TaskCard 
+                              task={task}
+                              onRefresh={refreshTasks}
+                            />
                           </motion.div>
                         ))}
                         

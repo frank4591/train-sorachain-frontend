@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { Task, UserRole } from "@/lib/constants";
@@ -13,14 +13,22 @@ import StakeTaskDialog from "@/components/StakeTaskDialog";
 interface TaskCardProps {
   task: Task;
   className?: string;
+  onRefresh?: () => void;
 }
 
-export default function TaskCard({ task, className }: TaskCardProps) {
+export default function TaskCard({ task, className, onRefresh }: TaskCardProps) {
   const { user } = useAuth();
   const [expanded, setExpanded] = useState(false);
   const [stakeDialogOpen, setStakeDialogOpen] = useState(false);
+  const [isStaked, setIsStaked] = useState(false);
   
-  const isStaked = user?.stakedTasks.includes(task.id) || false;
+  useEffect(() => {
+    // Check if the task is staked whenever user data changes
+    if (user) {
+      setIsStaked(user.stakedTasks.includes(task.id));
+    }
+  }, [user, task.id]);
+  
   const hasEnoughCredits = (user?.credits || 0) >= task.requiredCredits;
   
   const statusColors = {
@@ -35,6 +43,14 @@ export default function TaskCard({ task, className }: TaskCardProps) {
     "in_progress": <Clock className="h-4 w-4" />,
     "completed": <CheckCircle className="h-4 w-4" />,
     "failed": <AlertCircle className="h-4 w-4" />
+  };
+  
+  const handleStakeSuccess = () => {
+    setIsStaked(true);
+    // Call the parent refresh callback if provided
+    if (onRefresh) {
+      onRefresh();
+    }
   };
   
   const downloadConfig = () => {
@@ -73,7 +89,7 @@ export default function TaskCard({ task, className }: TaskCardProps) {
               </div>
               <h3 className="text-lg font-medium">{task.title}</h3>
             </div>
-            {isStaked && (
+            {isStaked && user?.taskRoles[task.id] && (
               <div className="px-2 py-1 bg-primary/10 text-primary text-xs rounded-md flex items-center">
                 <Shield className="h-3 w-3 mr-1" />
                 <span>Staked as {user?.taskRoles[task.id]}</span>
@@ -172,6 +188,7 @@ export default function TaskCard({ task, className }: TaskCardProps) {
         task={task}
         open={stakeDialogOpen}
         onOpenChange={setStakeDialogOpen}
+        onStakeSuccess={handleStakeSuccess}
       />
     </motion.div>
   );

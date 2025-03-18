@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
 import { Task, UserRole } from "@/lib/constants";
-import { motion } from "framer-motion";
 import { toast } from "sonner";
 import {
   Dialog,
@@ -15,15 +14,21 @@ import {
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { Coins, Cpu, Server, ShieldCheck, Download } from "lucide-react";
+import { Coins, Cpu, Server, ShieldCheck } from "lucide-react";
 
 interface StakeTaskDialogProps {
   task: Task;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onStakeSuccess?: () => void;
 }
 
-export default function StakeTaskDialog({ task, open, onOpenChange }: StakeTaskDialogProps) {
+export default function StakeTaskDialog({ 
+  task, 
+  open, 
+  onOpenChange,
+  onStakeSuccess 
+}: StakeTaskDialogProps) {
   const { user, updateUserData } = useAuth();
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -52,16 +57,36 @@ export default function StakeTaskDialog({ task, open, onOpenChange }: StakeTaskD
       await new Promise(resolve => setTimeout(resolve, 800));
       
       const newCredits = user.credits - task.requiredCredits;
-      const newStakedTasks = [...user.stakedTasks, task.id];
+      
+      // Ensure we don't add duplicate task IDs
+      const newStakedTasks = user.stakedTasks.includes(task.id) 
+        ? user.stakedTasks 
+        : [...user.stakedTasks, task.id];
+      
       const newTaskRoles = { ...user.taskRoles, [task.id]: selectedRole };
+      
+      // Add staking to credit history
+      const newCreditHistory = [...user.creditHistory, {
+        id: Math.random().toString(36).substring(2, 15),
+        amount: -task.requiredCredits,
+        reason: `Staked for ${task.title} as ${selectedRole}`,
+        timestamp: new Date().toISOString()
+      }];
       
       updateUserData({
         credits: newCredits,
         stakedTasks: newStakedTasks,
-        taskRoles: newTaskRoles
+        taskRoles: newTaskRoles,
+        creditHistory: newCreditHistory
       });
       
       toast.success(`Successfully staked for task as ${selectedRole}`);
+      
+      // Call the success callback if provided
+      if (onStakeSuccess) {
+        onStakeSuccess();
+      }
+      
       onOpenChange(false);
     } catch (error) {
       toast.error("Failed to stake for task. Please try again.");
