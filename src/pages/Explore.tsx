@@ -5,7 +5,7 @@ import Navbar from "@/components/Navbar";
 import { BlurredCard } from "@/components/ui/blurred-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
-import { Calendar, ChartLineUp, ListFilter, Table, Users } from "lucide-react";
+import { Calendar, ChartLine, ListFilter, Table, Users } from "lucide-react";
 
 export default function Explore() {
   const [timeframe, setTimeframe] = useState<"week" | "month" | "quarter" | "year">("month");
@@ -47,7 +47,7 @@ export default function Explore() {
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
                       <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center">
-                        <ChartLineUp className="h-5 w-5 text-primary" />
+                        <ChartLine className="h-5 w-5 text-primary" />
                       </div>
                       <h2 className="text-xl font-medium">Network Activity</h2>
                     </div>
@@ -91,7 +91,7 @@ export default function Explore() {
                   </p>
                   
                   <div className="flex flex-col items-center justify-center py-8">
-                    <ChartLineUp className="h-16 w-16 text-muted-foreground mb-4" />
+                    <ChartLine className="h-16 w-16 text-muted-foreground mb-4" />
                     <h3 className="text-xl font-medium mb-2">Network Activity Coming Soon</h3>
                     <p className="text-muted-foreground text-center max-w-md">
                       We're building out the data visualization features. Check back soon
