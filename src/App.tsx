@@ -14,6 +14,7 @@ import Explore from "./pages/Explore";
 import StakeToEarn from "./pages/StakeToEarn";
 import StakeToDevelop from "./pages/StakeToDevelop";
 import NotFound from "./pages/NotFound";
+import ProtectedLayout from "./components/ProtectedLayout";
 
 const queryClient = new QueryClient();
 
@@ -28,11 +29,16 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/explore" element={<Explore />} />
-            <Route path="/stake-to-earn" element={<StakeToEarn />} />
-            <Route path="/stake-to-develop" element={<StakeToDevelop />} />
+            
+            {/* Protected routes with navbar */}
+            <Route element={<ProtectedLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/explore" element={<Explore />} />
+              <Route path="/stake-to-earn" element={<StakeToEarn />} />
+              <Route path="/stake-to-develop" element={<StakeToDevelop />} />
+            </Route>
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
