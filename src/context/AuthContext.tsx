@@ -10,10 +10,11 @@ type AuthContextType = {
   isAuthenticated: boolean;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string, role: UserRole) => Promise<void>;
+  register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => void;
   updateUserData: (data: Partial<UserData>) => void;
   generateAuthKey: () => string;
+  addCredits: (amount: number, reason?: string) => void;
 };
 
 // Create context
@@ -58,7 +59,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         authKey: generateAuthKey(),
         tasks: [],
         stakedTasks: [],
-        taskRoles: {}
+        taskRoles: {},
+        dateOfBirth: "",
+        country: "",
+        phoneNumber: "",
+        creditHistory: []
       };
       
       setUser(userData);
@@ -74,24 +79,28 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Register handler
-  const register = async (email: string, password: string, name: string, role: UserRole) => {
+  const register = async (email: string, password: string, name: string) => {
     setIsLoading(true);
     
     try {
       // Simulate API delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Create new user
+      // Create new user with default role of client
       const userData: UserData = {
         id: "user-" + Math.random().toString(36).substring(2, 9),
         email,
         name,
-        role,
+        role: "client", // Default role
         credits: 50, // Starting credits
         authKey: generateAuthKey(),
         tasks: [],
         stakedTasks: [],
-        taskRoles: {}
+        taskRoles: {},
+        dateOfBirth: "",
+        country: "",
+        phoneNumber: "",
+        creditHistory: []
       };
       
       setUser(userData);
@@ -123,6 +132,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  // Add credits to user
+  const addCredits = (amount: number, reason: string = "System credit") => {
+    if (user) {
+      const newCredits = user.credits + amount;
+      const creditEvent = {
+        id: Math.random().toString(36).substring(2, 15),
+        amount,
+        reason,
+        timestamp: new Date().toISOString()
+      };
+      
+      const updatedUser = {
+        ...user,
+        credits: newCredits,
+        creditHistory: [...user.creditHistory, creditEvent]
+      };
+      
+      setUser(updatedUser);
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+      
+      toast.success(`Added ${amount} credits: ${reason}`);
+    }
+  };
+
   // Generate authentication key
   const generateAuthKey = () => {
     return "sk-" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -138,7 +171,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         register,
         logout,
         updateUserData,
-        generateAuthKey
+        generateAuthKey,
+        addCredits
       }}
     >
       {children}

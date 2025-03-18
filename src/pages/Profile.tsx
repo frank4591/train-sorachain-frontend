@@ -7,28 +7,48 @@ import { BlurredCard } from "@/components/ui/blurred-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import RoleSelector from "@/components/RoleSelector";
+import { Textarea } from "@/components/ui/textarea";
 import AuthKeyCard from "@/components/AuthKeyCard";
-import { UserRole } from "@/lib/constants";
 import { toast } from "sonner";
-import { CheckCircle, Loader2, Save, User } from "lucide-react";
+import { CheckCircle, Loader2, Save, User, Calendar, Globe, Phone } from "lucide-react";
+import { Form, FormControl, FormField, FormItem, FormLabel } from "@/components/ui/form";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+const profileSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  email: z.string().email().optional(),
+  dateOfBirth: z.string().optional(),
+  country: z.string().optional(),
+  phoneNumber: z.string().optional(),
+});
+
+type ProfileFormValues = z.infer<typeof profileSchema>;
 
 export default function Profile() {
   const { user, updateUserData, isLoading } = useAuth();
-  const [name, setName] = useState(user?.name || "");
-  const [email, setEmail] = useState(user?.email || "");
-  const [role, setRole] = useState<UserRole>(user?.role || "client");
   const [isSaving, setIsSaving] = useState(false);
   
-  const handleSave = () => {
+  const form = useForm<ProfileFormValues>({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      name: user?.name || "",
+      email: user?.email || "",
+      dateOfBirth: user?.dateOfBirth || "",
+      country: user?.country || "",
+      phoneNumber: user?.phoneNumber || "",
+    },
+  });
+  
+  const handleSave = (values: ProfileFormValues) => {
     setIsSaving(true);
     
     // Simulate API delay
     setTimeout(() => {
       updateUserData({
-        name,
-        email,
-        role
+        ...values,
+        email: user?.email, // Ensure email cannot be changed
       });
       
       toast.success("Profile updated successfully");
@@ -78,55 +98,122 @@ export default function Profile() {
                 </div>
                 
                 <div className="p-6 space-y-6">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Name</Label>
-                      <Input
-                        id="name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        placeholder="Your name"
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(handleSave)} className="space-y-6">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="name"
+                          render={({ field }) => (
+                            <FormItem className="space-y-2">
+                              <FormLabel>
+                                Name <span className="text-destructive">*</span>
+                              </FormLabel>
+                              <FormControl>
+                                <Input 
+                                  placeholder="Your name" 
+                                  {...field} 
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="email"
+                          render={({ field }) => (
+                            <FormItem className="space-y-2">
+                              <FormLabel>Email</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="your@email.com"
+                                  type="email"
+                                  disabled
+                                  {...field}
+                                />
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <FormField
+                          control={form.control}
+                          name="dateOfBirth"
+                          render={({ field }) => (
+                            <FormItem className="space-y-2">
+                              <FormLabel>Date of Birth</FormLabel>
+                              <FormControl>
+                                <div className="flex items-center">
+                                  <Calendar className="h-4 w-4 mr-2 text-muted-foreground" />
+                                  <Input
+                                    type="date"
+                                    {...field}
+                                  />
+                                </div>
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                        
+                        <FormField
+                          control={form.control}
+                          name="phoneNumber"
+                          render={({ field }) => (
+                            <FormItem className="space-y-2">
+                              <FormLabel>Phone Number</FormLabel>
+                              <FormControl>
+                                <div className="flex items-center">
+                                  <Phone className="h-4 w-4 mr-2 text-muted-foreground" />
+                                  <Input
+                                    placeholder="+1 (555) 000-0000"
+                                    {...field}
+                                  />
+                                </div>
+                              </FormControl>
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      
+                      <FormField
+                        control={form.control}
+                        name="country"
+                        render={({ field }) => (
+                          <FormItem className="space-y-2">
+                            <FormLabel>Country of Residence</FormLabel>
+                            <FormControl>
+                              <div className="flex items-center">
+                                <Globe className="h-4 w-4 mr-2 text-muted-foreground" />
+                                <Input
+                                  placeholder="Country"
+                                  {...field}
+                                />
+                              </div>
+                            </FormControl>
+                          </FormItem>
+                        )}
                       />
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input
-                        id="email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        placeholder="your@email.com"
-                        type="email"
-                      />
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <Label>Role</Label>
-                    <p className="text-sm text-muted-foreground mb-4">
-                      Your role determines what tasks you can participate in
-                    </p>
-                    <RoleSelector
-                      selectedRole={role}
-                      onSelectRole={(newRole) => setRole(newRole)}
-                    />
-                  </div>
-                  
-                  <div className="flex justify-end">
-                    <Button onClick={handleSave} disabled={isSaving}>
-                      {isSaving ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Saving...
-                        </>
-                      ) : (
-                        <>
-                          <Save className="mr-2 h-4 w-4" />
-                          Save changes
-                        </>
-                      )}
-                    </Button>
-                  </div>
+                      
+                      <div className="flex justify-end">
+                        <Button type="submit" disabled={isSaving}>
+                          {isSaving ? (
+                            <>
+                              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                              Saving...
+                            </>
+                          ) : (
+                            <>
+                              <Save className="mr-2 h-4 w-4" />
+                              Save changes
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </form>
+                  </Form>
                 </div>
               </BlurredCard>
             </motion.div>

@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 import { BlurredCard } from "@/components/ui/blurred-card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CreditDisplay from "@/components/CreditDisplay";
+import CreditHistoryCard from "@/components/CreditHistoryCard";
 import TaskCard from "@/components/TaskCard";
 import AuthKeyCard from "@/components/AuthKeyCard";
 import { MOCK_TASKS } from "@/lib/constants";
@@ -14,9 +15,7 @@ import {
   List,
   LayoutGrid,
   BrainCircuit,
-  Download,
   FileCode,
-  TerminalSquare
 } from "lucide-react";
 import ConfigCard from "@/components/ConfigCard";
 
@@ -230,6 +229,11 @@ export default function Dashboard() {
               className="space-y-6"
             >
               <CreditDisplay />
+              
+              {user?.creditHistory && user.creditHistory.length > 0 && (
+                <CreditHistoryCard creditHistory={user.creditHistory} />
+              )}
+              
               <AuthKeyCard />
               
               {stakedTasks.length > 0 && (
