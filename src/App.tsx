@@ -13,6 +13,7 @@ import Profile from "./pages/Profile";
 import Explore from "./pages/Explore";
 import StakeToEarn from "./pages/StakeToEarn";
 import StakeToDevelop from "./pages/StakeToDevelop";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import ProtectedLayout from "./components/ProtectedLayout";
 
@@ -37,6 +38,7 @@ const App = () => (
               <Route path="/explore" element={<Explore />} />
               <Route path="/stake-to-earn" element={<StakeToEarn />} />
               <Route path="/stake-to-develop" element={<StakeToDevelop />} />
+              <Route path="/admin" element={<AdminDashboard />} />
             </Route>
             
             <Route path="*" element={<NotFound />} />
