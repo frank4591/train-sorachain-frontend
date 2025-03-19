@@ -1,7 +1,7 @@
 
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, generateRandomString } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 // Type definitions
@@ -202,6 +202,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     
     try {
+      // First, sign up the user with Supabase Auth
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
@@ -213,6 +214,40 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       });
       
       if (error) throw error;
+      
+      // If signup is successful but we need to manually create the profile
+      // This is a fallback in case the database trigger fails
+      if (data.user) {
+        try {
+          // Check if profile already exists
+          const { data: existingProfile } = await supabase
+            .from('profiles')
+            .select('*')
+            .eq('id', data.user.id)
+            .single();
+            
+          if (!existingProfile) {
+            // Create profile manually
+            const authKey = `${data.user.id}-${generateRandomString(16)}`;
+            
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .insert({
+                id: data.user.id,
+                email,
+                name,
+                auth_key: authKey
+              });
+              
+            if (profileError) {
+              console.error("Error creating profile:", profileError);
+              toast.error("Account created but profile setup failed. Please contact support.");
+            }
+          }
+        } catch (profileErr) {
+          console.error("Profile creation error:", profileErr);
+        }
+      }
       
       toast.success("Registration successful!");
       navigate("/dashboard");
@@ -311,7 +346,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Generate authentication key
   const generateAuthKey = () => {
-    return "sk-" + Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    return "sk-" + generateRandomString(30);
   };
 
   return (
