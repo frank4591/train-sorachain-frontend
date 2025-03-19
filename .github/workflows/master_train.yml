@@ -37,13 +37,13 @@ jobs:
       
       - name: Verify Build Folder
         run: |
-          if [ ! -d "build" ]; then
+          if [ ! -d "dist" ]; then
             echo "Build folder not found! Build failed."
             exit 1
           fi
 
       - name: Zip build folder for deployment
-        run: zip release.zip build -r
+        run: zip release.zip dist -r
 
 
       - name: Upload artifact for deployment job
