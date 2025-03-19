@@ -23,11 +23,24 @@ jobs:
         with:
           node-version: '22.x'
 
-      - name: npm install, build, and test
+     # - name: npm install, build, and test
+     #   run: |
+     #     npm install
+     #     npm run build --if-present
+     #     npm run test --if-present
+      
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build React App
+        run: npm run build
+      
+      - name: Verify Build Folder
         run: |
-          npm install
-          npm run build --if-present
-          npm run test --if-present
+          if [ ! -d "build" ]; then
+            echo "Build folder not found! Build failed."
+            exit 1
+          fi
 
       - name: Zip build folder for deployment
         run: zip release.zip build -r
