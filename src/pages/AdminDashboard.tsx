@@ -7,6 +7,7 @@ import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth, UserRole } from "@/context/AuthContext";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 import {
   Plus,
   FileText,
@@ -52,7 +53,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import { navigate } from "react-router-dom";
 
 // Validation schema for task creation
 const taskSchema = z.object({
@@ -83,6 +83,7 @@ type ConfigFileFormValues = z.infer<typeof configFileSchema>;
 
 export default function AdminDashboard() {
   const { user, isAuthenticated, isLoading } = useAuth();
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState<any[]>([]);
   const [configFiles, setConfigFiles] = useState<any[]>([]);
   const [isCreatingTask, setIsCreatingTask] = useState(false);
