@@ -5,7 +5,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { BlurredCard } from "@/components/ui/blurred-card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const formSchema = z.object({
   name: z.string().min(2, {
@@ -35,6 +36,7 @@ type FormValues = z.infer<typeof formSchema>;
 export default function Register() {
   const { register: registerUser, isAuthenticated, isLoading } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -47,8 +49,14 @@ export default function Register() {
 
   const onSubmit = async (values: FormValues) => {
     setIsSubmitting(true);
+    setError(null);
+    
     try {
       await registerUser(values.email, values.password, values.name);
+      console.log("Registration successful!");
+    } catch (err: any) {
+      console.error("Register error:", err);
+      setError(err.message || "Registration failed. Please try again later.");
     } finally {
       setIsSubmitting(false);
     }
@@ -68,6 +76,13 @@ export default function Register() {
               Enter your details to get started
             </p>
           </div>
+
+          {error && (
+            <Alert variant="destructive" className="mb-6">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
+          )}
 
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
