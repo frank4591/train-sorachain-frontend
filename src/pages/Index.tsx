@@ -1,24 +1,19 @@
-
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { BlurredCard } from "@/components/ui/blurred-card";
 import { ChevronRight, Github, BrainCircuit, Cpu, Server, Database } from "lucide-react";
-
 export default function Index() {
-  const { isAuthenticated } = useAuth();
+  const {
+    isAuthenticated
+  } = useAuth();
   const [scrollY, setScrollY] = useState(0);
-  
-  return (
-    <div className="min-h-screen">
+  return <div className="min-h-screen">
       <section className="relative min-h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
-        <div 
-          className="absolute inset-0 -z-10 opacity-40"
-          style={{ 
-            backgroundImage: `radial-gradient(circle at 50% 50%, hsl(var(--primary)/0.3), transparent 70%)`,
-          }}
-        />
+        <div className="absolute inset-0 -z-10 opacity-40" style={{
+        backgroundImage: `radial-gradient(circle at 50% 50%, hsl(var(--primary)/0.3), transparent 70%)`
+      }} />
         
         <div className="relative z-10 max-w-4xl mx-auto text-center">
           <div className="mb-3">
@@ -29,13 +24,10 @@ export default function Index() {
           
           <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
             Train AI models with <br className="hidden md:block" />
-            <span className="text-gradient">Sora Chain</span>
+            <span className="text-gradient">SoraChain AI</span>
           </h1>
           
-          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            A decentralized platform for training AI models using GitHub repositories.
-            Stake credits, participate in training tasks, and earn rewards.
-          </p>
+          <p className="text-lg md:text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">A privacy preserving Machine Learning Engine for training AI models built on Collaborative Model Update(CMU) framework  </p>
           
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             <Link to={isAuthenticated ? "/dashboard" : "/register"}>
@@ -143,6 +135,5 @@ export default function Index() {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>;
 }
