@@ -18,7 +18,12 @@ export const ConfigFileList = ({ configFiles, tasks }: ConfigFileListProps) => {
           <p className="text-muted-foreground mb-6">
             Add configuration files to your tasks to provide participants with necessary setup.
           </p>
-          <Button onClick={() => document.querySelector('[data-add-config]')?.click()}>
+          <Button onClick={() => {
+            const element = document.querySelector('[data-add-config]');
+            if (element) {
+              (element as HTMLElement).click();
+            }
+          }}>
             <PlusCircle className="mr-2 h-4 w-4" />
             Add Your First Config File
           </Button>

@@ -28,7 +28,12 @@ export const TaskList = ({ tasks, refreshTasks }: TaskListProps) => {
           <p className="text-muted-foreground mb-6">
             Create your first task to start contributing to the network.
           </p>
-          <Button onClick={() => document.querySelector('[data-create-task]')?.click()}>
+          <Button onClick={() => {
+            const element = document.querySelector('[data-create-task]');
+            if (element) {
+              (element as HTMLElement).click();
+            }
+          }}>
             <PlusCircle className="mr-2 h-4 w-4" />
             Create Your First Task
           </Button>
