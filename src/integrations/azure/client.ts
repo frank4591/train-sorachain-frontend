@@ -69,7 +69,7 @@ export class AzureVisionClient {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'api-key': this.apiKey,
+            'Ocp-Apim-Subscription-Key': this.apiKey,
             'Access-Control-Allow-Origin': '*'
           },
           mode: 'cors', // Explicitly set CORS mode
