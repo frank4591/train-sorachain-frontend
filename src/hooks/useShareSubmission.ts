@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSoraRunes } from "@/context/SoraRunesContext";
 import { RUNES_PER_SUBMISSION } from "@/lib/sora-constants";
 import { toast } from "sonner";
-import { UserData } from "@/lib/constants";
+import { UserData } from "@/context/AuthContext";
 
 export const useShareSubmission = () => {
   const { incrementRunes } = useSoraRunes();

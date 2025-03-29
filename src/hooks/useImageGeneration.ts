@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSoraRunes } from "@/context/SoraRunesContext";
 import { toast } from "sonner";
 import { Message } from "@/components/ghibli/ChatHistory";
-import { UserData } from "@/lib/constants";
+import { UserData } from "@/context/AuthContext";
 
 interface UseImageGenerationProps {
   messages: Message[];
