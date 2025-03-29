@@ -1,3 +1,4 @@
+
 import { useState, useRef } from "react";
 import { ImagePlus, SendHorizontal, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -88,17 +89,19 @@ export default function ChatInput({
       )}
       
       <div className="flex items-end gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className="rounded-full flex-shrink-0 border-gray-300 text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={isLoading || disabled}
-        >
-          <ImagePlus className="h-4 w-4" />
-          <span className="sr-only">Upload image (optional)</span>
-        </Button>
+        {!hideImageUpload && (
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="rounded-full flex-shrink-0 border-gray-300 text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isLoading || disabled}
+          >
+            <ImagePlus className="h-4 w-4" />
+            <span className="sr-only">Upload image (optional)</span>
+          </Button>
+        )}
         
         <input
           ref={fileInputRef}
