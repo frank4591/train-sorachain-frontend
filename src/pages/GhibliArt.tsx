@@ -39,7 +39,7 @@ export default function GhibliArt() {
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
   
   // Azure configuration - using the new Stable Diffusion endpoint
-  const AZURE_ENDPOINT = "https://Stable-Diffusion-3-5-Large-kmkkg.eastus.models.ai.azure.com/images/generations";
+  const AZURE_ENDPOINT = "https://stable-diff-apim.developer.azure-api.net/images/generations";
   const AZURE_API_KEY = "Z7ok7Kb59E0sbbZUWgabUKe0G0eDnbBW";
   
   // Custom hooks for image generation and sharing
