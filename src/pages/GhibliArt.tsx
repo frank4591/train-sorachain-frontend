@@ -18,10 +18,6 @@ import BackgroundAnimation from "@/components/ghibli/BackgroundAnimation";
 import ShareDialog from "@/components/ghibli/dialogs/ShareDialog";
 import AuthDialog from "@/components/ghibli/dialogs/AuthDialog";
 
-// Azure credentials (in a real app, these would come from environment variables)
-const AZURE_ENDPOINT = "YOUR_AZURE_ENDPOINT";
-const AZURE_API_KEY = "YOUR_AZURE_API_KEY";
-
 export default function GhibliArt() {
   // Auth and state
   const { isAuthenticated, user } = useAuth();
@@ -42,6 +38,10 @@ export default function GhibliArt() {
   const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
+  
+  // Azure configuration (these will be set by the user through environment variables)
+  const AZURE_ENDPOINT = import.meta.env.VITE_AZURE_ENDPOINT || "";
+  const AZURE_API_KEY = import.meta.env.VITE_AZURE_API_KEY || "";
   
   // Custom hooks for image generation and sharing
   const { handleImageSubmission } = useImageGeneration({

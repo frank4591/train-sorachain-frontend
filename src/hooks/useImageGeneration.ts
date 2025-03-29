@@ -45,7 +45,10 @@ export const useImageGeneration = ({
     }
     
     const canUse = await useRunes(1);
-    if (!canUse) return;
+    if (!canUse) {
+      toast.error('Not enough SoraRunes. Please earn more by sharing previous generations.');
+      return;
+    }
     
     const messageId = uuidv4();
     const timestamp = new Date();
@@ -71,17 +74,26 @@ export const useImageGeneration = ({
         
         setMessages(prev => [...prev, userMessage]);
         
+        // Check if Azure credentials are provided
+        const hasAzureCredentials = azureEndpoint && azureApiKey;
+        
+        if (!hasAzureCredentials) {
+          console.warn('Azure credentials not provided. Using demo mode.');
+          toast.warning('Running in demo mode. Please configure Azure credentials for real transformations.');
+        }
+        
         // Call API
         try {
           let outputImageUrl;
           
-          if (azureEndpoint && azureApiKey) {
+          if (hasAzureCredentials) {
             try {
               // Initialize Azure client
               const azureClient = getAzureVisionClient(azureApiKey, azureEndpoint);
               
               if (azureClient) {
                 // Call Azure endpoint
+                toast.info('Transforming your image...');
                 outputImageUrl = await azureClient.generateImage(
                   messageText || 'Transform this image in Ghibli style',
                   imageUrl
@@ -93,6 +105,7 @@ export const useImageGeneration = ({
               }
             } catch (azureError) {
               console.error('Azure API error:', azureError);
+              toast.error('Failed to transform image with Azure. Using placeholder image instead.');
               // Fallback to random image
               const randomId = Math.floor(Math.random() * 1000);
               outputImageUrl = `https://picsum.photos/800/600?random=${randomId}`;
