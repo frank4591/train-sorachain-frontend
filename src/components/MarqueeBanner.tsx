@@ -1,89 +1,100 @@
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
-import { X, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { Button } from '@/components/ui/button';
+import { Sparkles } from 'lucide-react';
 
 interface MarqueeBannerProps {
   text: string;
-  buttonText: string;
-  buttonLink: string;
+  actionText?: string;
+  actionUrl?: string;
+  autoClose?: boolean;
+  autoCloseDelay?: number;
 }
 
-export default function MarqueeBanner({ 
-  text, 
-  buttonText, 
-  buttonLink 
+export function MarqueeBanner({
+  text = 'Try our newest product of our ecosystem, "Generate Ghibli Art"',
+  actionText = 'Generate Art',
+  actionUrl = '/ghibli-art',
+  autoClose = false,
+  autoCloseDelay = 7000,
 }: MarqueeBannerProps) {
   const [isVisible, setIsVisible] = useState(true);
-  const [shouldAnimate, setShouldAnimate] = useState(true);
+  const [hasBeenSeen, setHasBeenSeen] = useState(() => {
+    const stored = localStorage.getItem('ghibliMarqueeSeen');
+    return stored ? JSON.parse(stored) : false;
+  });
 
   useEffect(() => {
-    // Pause animation when tab is not visible to improve performance
-    const handleVisibilityChange = () => {
-      setShouldAnimate(!document.hidden);
-    };
+    if (hasBeenSeen) {
+      setIsVisible(false);
+    } else if (autoClose) {
+      const timer = setTimeout(() => {
+        setIsVisible(false);
+        localStorage.setItem('ghibliMarqueeSeen', JSON.stringify(true));
+        setHasBeenSeen(true);
+      }, autoCloseDelay);
 
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    return () => {
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, []);
+      return () => clearTimeout(timer);
+    }
+  }, [autoClose, autoCloseDelay, hasBeenSeen]);
+
+  const handleClose = () => {
+    setIsVisible(false);
+    localStorage.setItem('ghibliMarqueeSeen', JSON.stringify(true));
+    setHasBeenSeen(true);
+  };
 
   if (!isVisible) return null;
 
   return (
-    <div className="bg-primary/10 border-b border-primary/20 relative overflow-hidden py-2 px-4">
-      <div className="flex items-center justify-center">
-        <div className="overflow-hidden w-full">
-          {shouldAnimate ? (
-            <motion.div
-              animate={{ x: ["-100%", "100%"] }}
-              transition={{
-                x: {
-                  duration: 20,
-                  repeat: Infinity,
-                  ease: "linear",
-                },
-              }}
-              className="whitespace-nowrap flex items-center"
-            >
-              {Array(5).fill(
-                <div className="inline-flex items-center mx-4">
-                  <Sparkles className="h-4 w-4 text-primary mr-2 animate-pulse" />
-                  <span className="text-sm font-medium">{text}</span>
-                  <Sparkles className="h-4 w-4 text-primary ml-2 animate-pulse" />
-                </div>
-              )}
-            </motion.div>
-          ) : (
-            <div className="text-center">
-              <span className="text-sm font-medium">{text}</span>
-            </div>
-          )}
+    <div className="relative bg-gradient-to-r from-purple-600 via-pink-500 to-amber-500 text-white py-2 overflow-hidden">
+      <div className="absolute inset-0 flex items-center">
+        <div className="marquee-content w-full whitespace-nowrap overflow-hidden">
+          <div className="animate-marquee inline-block">
+            {[...Array(10)].map((_, i) => (
+              <span key={i} className="mx-4">★ {text} ★</span>
+            ))}
+          </div>
         </div>
+      </div>
+      
+      <div className="container mx-auto px-4 relative flex justify-between items-center">
+        <div className="w-32"></div> {/* Spacer */}
         
-        <div className="absolute right-16 z-10 flex items-center">
-          <Button
-            as={Link}
-            to={buttonLink}
-            size="sm"
-            className="animate-pulse hover:animate-none bg-primary/80 hover:bg-primary"
+        <div className="flex justify-center items-center space-x-4 py-1 z-10">
+          <Button 
+            variant="secondary" 
+            size="sm" 
+            className="animate-pulse bg-white text-purple-700 hover:bg-gray-100 font-medium"
+            onClick={() => window.location.href = actionUrl}
           >
-            <Sparkles className="h-3 w-3 mr-1" />
-            {buttonText}
+            <Sparkles className="h-4 w-4 mr-1" />
+            {actionText}
           </Button>
         </div>
         
-        <button
-          onClick={() => setIsVisible(false)}
-          className="absolute right-4 top-2 text-muted-foreground hover:text-foreground"
-          aria-label="Close banner"
+        <Button
+          variant="ghost"
+          size="sm"
+          className="text-white hover:bg-white/20"
+          onClick={handleClose}
         >
-          <X className="h-4 w-4" />
-        </button>
+          Dismiss
+        </Button>
       </div>
+      
+      <style jsx>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 30s linear infinite;
+        }
+      `}</style>
     </div>
   );
 }
+
+export default MarqueeBanner;
