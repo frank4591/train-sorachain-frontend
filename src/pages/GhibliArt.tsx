@@ -89,8 +89,8 @@ export default function GhibliArt() {
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-b from-[#f5f7fa] to-[#e4f1f7] animate-gradient-y">
-      {/* Background Elements */}
+    <div className="flex flex-col h-screen bg-white">
+      {/* Clean white background - removed gradient */}
       <BackgroundAnimation />
 
       {/* Header */}
@@ -113,8 +113,8 @@ export default function GhibliArt() {
           activeSessionId={activeSessionId}
         />
         
-        {/* Main Chat Area */}
-        <main className="flex-1 flex flex-col overflow-hidden bg-gradient-to-b from-transparent to-[#e4f1f7]/60">
+        {/* Main Chat Area - clean white background */}
+        <main className="flex-1 flex flex-col overflow-hidden bg-white">
           <ChatHistory 
             messages={messages} 
             isLoading={isLoading} 

@@ -19,6 +19,30 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   useEffect(() => {
     const checkUser = async () => {
       try {
+        // First set up auth state change listener (important for catching events)
+        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+          console.log("Auth state changed:", event, session?.user?.id);
+          
+          if (event === 'SIGNED_IN' && session) {
+            // Don't get profile in the callback to avoid Supabase deadlocks
+            // Just update session state synchronously
+            setTimeout(async () => {
+              const userData = await fetchUserProfile(session.user.id);
+              if (userData) {
+                setUser(userData);
+                console.log("User profile fetched:", userData);
+              } else {
+                console.log("No user profile found, might be a new registration");
+              }
+              setIsLoading(false);
+            }, 0);
+          } else if (event === 'SIGNED_OUT') {
+            setUser(null);
+            setIsLoading(false);
+          }
+        });
+
+        // Then check for existing session
         const { data: { session } } = await supabase.auth.getSession();
         
         if (session) {
@@ -27,37 +51,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setUser(userData);
           }
         }
+        
+        setIsLoading(false);
+        
+        return () => {
+          subscription.unsubscribe();
+        };
       } catch (error) {
         console.error("Session check error:", error);
-      } finally {
         setIsLoading(false);
       }
     };
     
     checkUser();
-    
-    // Set up auth state change listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log("Auth state changed:", event, session?.user?.id);
-      
-      if (event === 'SIGNED_IN' && session) {
-        setIsLoading(true);
-        const userData = await fetchUserProfile(session.user.id);
-        if (userData) {
-          setUser(userData);
-          console.log("User profile fetched:", userData);
-        } else {
-          console.log("No user profile found, might be a new registration");
-        }
-        setIsLoading(false);
-      } else if (event === 'SIGNED_OUT') {
-        setUser(null);
-      }
-    });
-    
-    return () => {
-      subscription.unsubscribe();
-    };
   }, []);
 
   // Login handler
@@ -157,9 +163,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       toast.success("Registration successful!");
       
-      // Navigate to dashboard
+      // Redirect to the page they were trying to access, or dashboard as fallback
+      const storedRedirectPath = sessionStorage.getItem('redirectPath');
+      
       setTimeout(() => {
-        navigate("/dashboard");
+        if (storedRedirectPath) {
+          navigate(storedRedirectPath);
+          sessionStorage.removeItem('redirectPath');
+        } else {
+          navigate("/dashboard");
+        }
       }, 100);
     } catch (error: any) {
       toast.error(error.message || "Registration failed. Please try again.");
@@ -172,10 +185,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Logout handler
   const logout = async () => {
-    await supabase.auth.signOut();
-    setUser(null);
-    toast.info("You've been logged out");
-    navigate("/");
+    setIsLoading(true);
+    try {
+      await supabase.auth.signOut();
+      setUser(null);
+      toast.info("You've been logged out");
+      navigate("/");
+    } catch (error) {
+      console.error("Logout error:", error);
+      toast.error("Logout failed. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Update user data

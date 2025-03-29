@@ -41,6 +41,7 @@ export default function Login() {
   
   // Extract the redirect path from location state, default to dashboard
   const from = location.state?.from || "/dashboard";
+  console.log("Login page, redirect path:", from);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -55,6 +56,7 @@ export default function Login() {
     setError(null);
     
     try {
+      console.log("Attempting login with:", values.email);
       await login(values.email, values.password);
       // After successful login, AuthProvider will handle navigation
     } catch (err: any) {
@@ -75,11 +77,12 @@ export default function Login() {
 
   if (isAuthenticated) {
     // Redirect to the page they were trying to access, or dashboard as fallback
+    console.log("User is authenticated, redirecting to:", from);
     return <Navigate to={from} replace />;
   }
 
   return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -89,8 +92,8 @@ export default function Login() {
         <BlurredCard className="w-full">
           <div className="p-6">
             <div className="mb-8 text-center">
-              <h1 className="text-2xl font-bold">Welcome back</h1>
-              <p className="text-muted-foreground mt-1">
+              <h1 className="text-2xl font-bold text-[#29647c]">Welcome back</h1>
+              <p className="text-[#29647c]/70 mt-1">
                 Sign in to your account to continue
               </p>
             </div>
@@ -109,9 +112,14 @@ export default function Login() {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel className="text-[#29647c]">Email</FormLabel>
                       <FormControl>
-                        <Input type="email" placeholder="you@example.com" {...field} />
+                        <Input 
+                          type="email" 
+                          placeholder="you@example.com" 
+                          {...field} 
+                          className="border-[#29647c]/30 focus-visible:ring-[#29647c]"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -123,12 +131,13 @@ export default function Login() {
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel className="text-[#29647c]">Password</FormLabel>
                       <FormControl>
                         <Input
                           type="password"
                           placeholder="Enter your password"
                           {...field}
+                          className="border-[#29647c]/30 focus-visible:ring-[#29647c]"
                         />
                       </FormControl>
                       <FormMessage />
@@ -138,7 +147,7 @@ export default function Login() {
 
                 <Button
                   type="submit"
-                  className="w-full"
+                  className="w-full bg-[#29647c] hover:bg-[#29647c]/80 text-white"
                   disabled={isSubmitting}
                 >
                   {isSubmitting ? (
@@ -154,16 +163,20 @@ export default function Login() {
             </Form>
 
             <div className="mt-6 text-center text-sm">
-              <span className="text-muted-foreground">
+              <span className="text-[#29647c]/70">
                 Don&apos;t have an account?{" "}
               </span>
-              <Link to="/register" className="font-medium text-primary hover:underline">
+              <Link 
+                to="/register" 
+                state={{ from: location.state?.from }}
+                className="font-medium text-[#29647c] hover:underline"
+              >
                 Sign up
               </Link>
               
               {failedAttempts >= 2 && (
                 <div className="mt-3">
-                  <Link to="/reset-password" className="font-medium text-primary hover:underline">
+                  <Link to="/reset-password" className="font-medium text-[#29647c] hover:underline">
                     Forgot password? Reset it here
                   </Link>
                 </div>
