@@ -90,19 +90,15 @@ export default function GhibliArt() {
 
   return (
     <div className="flex flex-col h-screen bg-white">
-      {/* Clean white background - removed gradient */}
       <BackgroundAnimation />
 
-      {/* Header */}
       <Header 
         showSidebar={showSidebar} 
         setShowSidebar={setShowSidebar} 
         setMobileSheetOpen={setMobileSheetOpen} 
       />
 
-      {/* Main Content */}
       <div className="flex-1 flex overflow-hidden relative z-1">
-        {/* Sidebar */}
         <Sidebar
           showSidebar={showSidebar}
           mobileSheetOpen={mobileSheetOpen}
@@ -113,7 +109,6 @@ export default function GhibliArt() {
           activeSessionId={activeSessionId}
         />
         
-        {/* Main Chat Area - clean white background */}
         <main className="flex-1 flex flex-col overflow-hidden bg-white">
           <ChatHistory 
             messages={messages} 
@@ -124,7 +119,6 @@ export default function GhibliArt() {
         </main>
       </div>
 
-      {/* Dialogs */}
       <ShareDialog 
         open={shareDialogOpen} 
         onOpenChange={setShareDialogOpen} 

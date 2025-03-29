@@ -32,7 +32,7 @@ export default function Header({ showSidebar, setShowSidebar, setMobileSheetOpen
   const navigate = useNavigate();
 
   return (
-    <header className="border-b border-violet-800/20 bg-black/20 backdrop-blur-sm z-10">
+    <header className="border-b border-gray-200 bg-white z-10">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="flex h-16 items-center justify-between">
           <div className="flex items-center gap-2">
@@ -40,7 +40,7 @@ export default function Header({ showSidebar, setShowSidebar, setMobileSheetOpen
               variant="ghost"
               size="icon"
               onClick={() => setShowSidebar(!showSidebar)}
-              className="text-violet-200 hover:text-white hover:bg-violet-900/30"
+              className="text-gray-700 hover:text-black hover:bg-gray-100"
             >
               {showSidebar ? (
                 <PanelLeftClose className="h-5 w-5" />
@@ -48,13 +48,13 @@ export default function Header({ showSidebar, setShowSidebar, setMobileSheetOpen
                 <PanelLeftOpen className="h-5 w-5" />
               )}
             </Button>
-            <h1 className="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-violet-300 to-pink-300">
+            <h1 className="text-xl font-bold text-gray-900">
               Ghibli SoraNet
             </h1>
           </div>
           
           <div>
-            <p className="text-sm text-violet-200/70">
+            <p className="text-sm text-gray-600">
               Transform your images into Ghibli-style masterpieces
             </p>
           </div>
@@ -64,7 +64,7 @@ export default function Header({ showSidebar, setShowSidebar, setMobileSheetOpen
               variant="ghost" 
               size="icon"
               onClick={() => setMobileSheetOpen(true)}
-              className="text-violet-200 hover:text-white hover:bg-violet-900/30"
+              className="text-gray-700 hover:text-black hover:bg-gray-100"
             >
               <LayoutList className="h-5 w-5" />
             </Button>
@@ -77,31 +77,31 @@ export default function Header({ showSidebar, setShowSidebar, setMobileSheetOpen
                   <Button 
                     variant="ghost" 
                     size="icon"
-                    className="rounded-full h-9 w-9 p-0 border border-violet-700/50 hover:bg-violet-900/30 text-violet-300"
+                    className="rounded-full h-9 w-9 p-0 border border-gray-300 hover:bg-gray-100 text-gray-700"
                   >
                     <Avatar className="h-8 w-8">
                       <AvatarImage src="" />
-                      <AvatarFallback className="bg-violet-800 text-violet-200">
+                      <AvatarFallback className="bg-gray-200 text-gray-800">
                         {user?.name?.charAt(0) || user?.email?.charAt(0) || 'U'}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-56 bg-[#1a1d2d] border-violet-800/50 text-violet-200">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator className="bg-violet-800/50" />
-                  <DropdownMenuItem onClick={() => navigate('/profile')} className="hover:bg-violet-800/30 focus:bg-violet-800/30 cursor-pointer">
+                <DropdownMenuContent align="end" className="w-56 bg-white border border-gray-200 text-gray-900">
+                  <DropdownMenuLabel className="text-gray-600">My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator className="bg-gray-200" />
+                  <DropdownMenuItem onClick={() => navigate('/profile')} className="hover:bg-gray-100 focus:bg-gray-100 cursor-pointer text-gray-800">
                     <User className="mr-2 h-4 w-4" />
                     <span>Profile</span>
                   </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate('/dashboard')} className="hover:bg-violet-800/30 focus:bg-violet-800/30 cursor-pointer">
+                  <DropdownMenuItem onClick={() => navigate('/dashboard')} className="hover:bg-gray-100 focus:bg-gray-100 cursor-pointer text-gray-800">
                     <Settings className="mr-2 h-4 w-4" />
                     <span>Dashboard</span>
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator className="bg-violet-800/50" />
+                  <DropdownMenuSeparator className="bg-gray-200" />
                   <DropdownMenuItem 
                     onClick={() => logout()} 
-                    className="text-pink-300 hover:bg-violet-800/30 focus:bg-violet-800/30 hover:text-pink-200 cursor-pointer"
+                    className="text-red-600 hover:bg-gray-100 focus:bg-gray-100 hover:text-red-700 cursor-pointer"
                   >
                     <LogOut className="mr-2 h-4 w-4" />
                     <span>Logout</span>
@@ -111,8 +111,8 @@ export default function Header({ showSidebar, setShowSidebar, setMobileSheetOpen
             ) : (
               <Button 
                 size="sm" 
-                variant="ghost"
-                className="text-violet-200 hover:text-white border border-violet-700/50 hover:bg-violet-900/30"
+                variant="outline"
+                className="text-gray-800 hover:text-black border-gray-300 hover:bg-gray-100"
                 onClick={() => navigate('/login', { state: { from: "/ghibli-art" } })}
               >
                 Sign In

@@ -63,21 +63,21 @@ export default function ChatInput({ onSubmit, isLoading, disabled = false }: Cha
   };
 
   return (
-    <div className="p-4 border-t border-violet-800/20 bg-black/40 backdrop-blur-sm">
+    <div className="p-4 border-t border-gray-200 bg-white">
       {imagePreview && (
         <div className="mb-4 relative group">
           <img
             src={imagePreview}
             alt="Preview"
-            className="h-32 object-cover rounded-md border border-violet-800/30"
+            className="h-32 object-cover rounded-md border border-gray-300"
           />
           <Button
             variant="destructive"
             size="icon"
-            className="absolute top-2 right-2 h-6 w-6 rounded-full bg-black/70 hover:bg-black/90 opacity-60 group-hover:opacity-100 transition-opacity"
+            className="absolute top-2 right-2 h-6 w-6 rounded-full bg-gray-100 hover:bg-gray-200 opacity-60 group-hover:opacity-100 transition-opacity"
             onClick={clearImage}
           >
-            <X className="h-3 w-3" />
+            <X className="h-3 w-3 text-gray-800" />
           </Button>
         </div>
       )}
@@ -87,7 +87,7 @@ export default function ChatInput({ onSubmit, isLoading, disabled = false }: Cha
           type="button"
           variant="outline"
           size="icon"
-          className="rounded-full flex-shrink-0 border-violet-700/50 text-violet-300 hover:text-violet-100 hover:bg-violet-800/30"
+          className="rounded-full flex-shrink-0 border-gray-300 text-gray-700 hover:text-gray-900 hover:bg-gray-100"
           onClick={() => fileInputRef.current?.click()}
           disabled={isLoading || disabled}
         >
@@ -109,7 +109,7 @@ export default function ChatInput({ onSubmit, isLoading, disabled = false }: Cha
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="pr-12 resize-none min-h-[60px] max-h-32 bg-violet-900/10 border-violet-800/30 text-violet-200 placeholder:text-violet-400/50 focus-visible:ring-violet-500"
+            className="pr-12 resize-none min-h-[60px] max-h-32 bg-gray-50 border-gray-300 text-gray-900 placeholder:text-gray-500 focus-visible:ring-gray-500"
             disabled={isLoading || disabled}
           />
           <div className="absolute right-2 bottom-2 flex flex-col justify-end">
@@ -117,7 +117,7 @@ export default function ChatInput({ onSubmit, isLoading, disabled = false }: Cha
               type="button"
               variant="ghost"
               size="icon"
-              className={`h-8 w-8 rounded-full text-violet-300 hover:text-violet-100 hover:bg-violet-800/30 ${
+              className={`h-8 w-8 rounded-full text-gray-700 hover:text-gray-900 hover:bg-gray-100 ${
                 message.trim() === "" ? "opacity-50" : ""
               }`}
               onClick={handleSubmit}

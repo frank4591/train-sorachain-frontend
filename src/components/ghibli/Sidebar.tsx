@@ -30,20 +30,20 @@ export default function Sidebar({
     <>
       {/* Desktop Sidebar */}
       {showSidebar && (
-        <aside className="hidden md:flex md:w-80 lg:w-96 flex-col border-r border-violet-800/20 bg-black/10 backdrop-blur-sm animate-fade-in-right">
+        <aside className="hidden md:flex md:w-80 lg:w-96 flex-col border-r border-gray-200 bg-white animate-fade-in-right">
           <Tabs
             defaultValue="sessions"
             value={activeSidebarTab}
             onValueChange={setActiveSidebarTab}
             className="flex-1 flex flex-col"
           >
-            <div className="border-b border-violet-800/20 px-4 py-2">
-              <TabsList className="w-full grid grid-cols-2 bg-violet-900/20">
-                <TabsTrigger value="sessions" className="flex gap-1 data-[state=active]:bg-violet-700/50 text-violet-200">
+            <div className="border-b border-gray-200 px-4 py-2">
+              <TabsList className="w-full grid grid-cols-2 bg-gray-100">
+                <TabsTrigger value="sessions" className="flex gap-1 data-[state=active]:bg-gray-200 text-gray-800">
                   <LayoutList className="h-4 w-4" />
                   <span>Sessions</span>
                 </TabsTrigger>
-                <TabsTrigger value="leaderboard" className="flex gap-1 data-[state=active]:bg-violet-700/50 text-violet-200">
+                <TabsTrigger value="leaderboard" className="flex gap-1 data-[state=active]:bg-gray-200 text-gray-800">
                   <Users className="h-4 w-4" />
                   <span>Leaderboard</span>
                 </TabsTrigger>
@@ -72,7 +72,7 @@ export default function Sidebar({
       <Sheet open={mobileSheetOpen} onOpenChange={setMobileSheetOpen}>
         <SheetContent 
           side="left" 
-          className="w-full sm:max-w-md p-0 flex flex-col bg-[#121826] border-violet-800/30"
+          className="w-full sm:max-w-md p-0 flex flex-col bg-white border-r border-gray-200"
         >
           <Tabs
             defaultValue="sessions"
@@ -80,13 +80,13 @@ export default function Sidebar({
             onValueChange={setActiveSidebarTab}
             className="flex-1 flex flex-col"
           >
-            <div className="border-b border-violet-800/20 px-4 py-2">
-              <TabsList className="w-full grid grid-cols-2 bg-violet-900/20">
-                <TabsTrigger value="sessions" className="flex gap-1 data-[state=active]:bg-violet-700/50 text-violet-200">
+            <div className="border-b border-gray-200 px-4 py-2">
+              <TabsList className="w-full grid grid-cols-2 bg-gray-100">
+                <TabsTrigger value="sessions" className="flex gap-1 data-[state=active]:bg-gray-200 text-gray-800">
                   <LayoutList className="h-4 w-4" />
                   <span>Sessions</span>
                 </TabsTrigger>
-                <TabsTrigger value="leaderboard" className="flex gap-1 data-[state=active]:bg-violet-700/50 text-violet-200">
+                <TabsTrigger value="leaderboard" className="flex gap-1 data-[state=active]:bg-gray-200 text-gray-800">
                   <Users className="h-4 w-4" />
                   <span>Leaderboard</span>
                 </TabsTrigger>
