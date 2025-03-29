@@ -3,14 +3,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSoraRunes } from "@/context/SoraRunesContext";
 import { RUNES_PER_SUBMISSION } from "@/lib/sora-constants";
 import { toast } from "sonner";
-import { User } from "@supabase/supabase-js";
+import { UserData } from "@/lib/constants";
 
 export const useShareSubmission = () => {
   const { incrementRunes } = useSoraRunes();
 
   const handleShareSubmission = async (
     generatedImageUrl: string | null,
-    user: User | null,
+    user: UserData | null,
     isAuthenticated: boolean,
     onClose: () => void
   ) => {

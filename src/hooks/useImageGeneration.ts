@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useSoraRunes } from "@/context/SoraRunesContext";
 import { toast } from "sonner";
 import { Message } from "@/components/ghibli/ChatHistory";
-import { User } from "@supabase/supabase-js";
+import { UserData } from "@/lib/constants";
 
 interface UseImageGenerationProps {
   messages: Message[];
@@ -53,7 +53,7 @@ export const useImageGeneration = ({
   const handleImageSubmission = async (
     messageText: string,
     imageFile: File | null,
-    user: User | null,
+    user: UserData | null,
     isAuthenticated: boolean,
     setAuthDialogOpen: (open: boolean) => void,
     azureEndpoint?: string,
