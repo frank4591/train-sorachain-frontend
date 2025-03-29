@@ -11,6 +11,7 @@ interface ImageGenerationRequest {
   prompt: string;
   num_images?: number;
   size?: string;
+  init_image?: string;
 }
 
 interface ImageGenerationResponse {
@@ -34,7 +35,7 @@ export class AzureVisionClient {
     this.endpoint = options.endpoint;
   }
 
-  async generateImage(prompt: string, _imageBase64?: string): Promise<string | null> {
+  async generateImage(prompt: string, imageBase64?: string): Promise<string | null> {
     try {
       if (!this.apiKey || !this.endpoint) {
         console.error('Azure API key or endpoint not configured');
@@ -43,6 +44,23 @@ export class AzureVisionClient {
       }
 
       console.log('Calling Azure Stable Diffusion API with prompt:', prompt);
+      
+      // Prepare request body
+      const requestBody: ImageGenerationRequest = {
+        prompt,
+        num_images: 1,
+        size: "1024x1024"
+      };
+      
+      // Add the image if provided (base64 format)
+      if (imageBase64) {
+        console.log('Including reference image in request');
+        // Extract the base64 data from the dataURL format
+        const base64Data = imageBase64.split(',')[1];
+        if (base64Data) {
+          requestBody.init_image = base64Data;
+        }
+      }
 
       const response = await fetch(this.endpoint, {
         method: 'POST',
@@ -50,11 +68,7 @@ export class AzureVisionClient {
           'Content-Type': 'application/json',
           'api-key': this.apiKey
         },
-        body: JSON.stringify({
-          prompt,
-          num_images: 1,
-          size: "1024x1024"
-        } as ImageGenerationRequest)
+        body: JSON.stringify(requestBody)
       });
 
       if (!response.ok) {

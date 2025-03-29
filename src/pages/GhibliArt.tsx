@@ -114,7 +114,7 @@ export default function GhibliArt() {
             isLoading={isLoading} 
             onDownload={downloadImage}
           />
-          <ChatInput onSubmit={handleSubmit} isLoading={isLoading} hideImageUpload={true} />
+          <ChatInput onSubmit={handleSubmit} isLoading={isLoading} />
         </main>
       </div>
 

@@ -125,7 +125,7 @@ export const useImageGeneration = ({
             let enhancedPrompt = `You are an artist creating anime, toony, Ghibli, or any art form. ${messageText}`;
             
             // Call Azure endpoint
-            outputImageUrl = await azureClient.generateImage(enhancedPrompt, inputImageUrl || undefined);
+            outputImageUrl = await azureClient.generateImage(enhancedPrompt, inputImageUrl);
           }
           
           if (!outputImageUrl) {
@@ -167,7 +167,7 @@ export const useImageGeneration = ({
             input_image: inputImageUrl || '',
             input_description: messageText,
             output_image: outputImageUrl,
-            status: 'approved', // Changed from 'completed' to 'approved' to match the enum type
+            status: 'approved', // This matches the expected enum type
             is_public: false
           });
         
