@@ -40,12 +40,6 @@ export function MarqueeBanner({
     }
   }, [autoClose, autoCloseDelay, hasBeenSeen]);
 
-  const handleClose = () => {
-    setIsVisible(false);
-    localStorage.setItem('ghibliMarqueeSeen', JSON.stringify(true));
-    setHasBeenSeen(true);
-  };
-
   if (!isVisible) return null;
 
   return (
@@ -61,9 +55,9 @@ export function MarqueeBanner({
       </div>
       
       <div className="container mx-auto px-4 relative flex justify-between items-center">
-        <div className="w-32"></div> {/* Spacer */}
+        <div className="w-2/3"></div> {/* Spacer */}
         
-        <div className="flex justify-center items-center space-x-4 py-1 z-10">
+        <div className="flex justify-end items-center py-1 z-10">
           <Button 
             variant="secondary" 
             size="sm" 
@@ -74,15 +68,6 @@ export function MarqueeBanner({
             {actionText}
           </Button>
         </div>
-        
-        <Button
-          variant="ghost"
-          size="sm"
-          className="text-white hover:bg-white/20"
-          onClick={handleClose}
-        >
-          Dismiss
-        </Button>
       </div>
       
       <style>
