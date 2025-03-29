@@ -6,6 +6,7 @@ import { useSoraRunes } from "@/context/SoraRunesContext";
 import { toast } from "sonner";
 import { Message } from "@/components/ghibli/ChatHistory";
 import { UserData } from "@/context/AuthContext";
+import { getAzureVisionClient } from "@/integrations/azure/client";
 
 interface UseImageGenerationProps {
   messages: Message[];
@@ -23,32 +24,6 @@ export const useImageGeneration = ({
   setShareDialogOpen
 }: UseImageGenerationProps) => {
   const { useRunes } = useSoraRunes();
-
-  const callAzureEndpoint = async (imageData: string, prompt: string, azureEndpoint: string, azureApiKey: string) => {
-    try {
-      const response = await fetch(`${azureEndpoint}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'api-key': azureApiKey
-        },
-        body: JSON.stringify({
-          prompt: prompt,
-          image: imageData
-        })
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Azure API returned ${response.status}`);
-      }
-      
-      const data = await response.json();
-      return data.output_url || data.result || data.image_url; // Adapt based on Azure's response format
-    } catch (error) {
-      console.error('Azure API error:', error);
-      throw error;
-    }
-  };
 
   const handleImageSubmission = async (
     messageText: string,
@@ -102,13 +77,20 @@ export const useImageGeneration = ({
           
           if (azureEndpoint && azureApiKey) {
             try {
-              // Call Azure endpoint
-              outputImageUrl = await callAzureEndpoint(
-                imageUrl, 
-                messageText || 'Transform this image in Ghibli style',
-                azureEndpoint,
-                azureApiKey
-              );
+              // Initialize Azure client
+              const azureClient = getAzureVisionClient(azureApiKey, azureEndpoint);
+              
+              if (azureClient) {
+                // Call Azure endpoint
+                outputImageUrl = await azureClient.generateImage(
+                  messageText || 'Transform this image in Ghibli style',
+                  imageUrl
+                );
+              }
+              
+              if (!outputImageUrl) {
+                throw new Error('Azure API failed to generate image');
+              }
             } catch (azureError) {
               console.error('Azure API error:', azureError);
               // Fallback to random image
