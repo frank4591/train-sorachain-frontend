@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
@@ -10,12 +10,15 @@ interface AuthDialogProps {
 }
 
 export default function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
+  const location = useLocation();
+  const currentPath = location.pathname;
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-[#1a1d2d] border-violet-800/50 text-violet-200">
+      <DialogContent className="sm:max-w-md bg-[#1a243a] border-[#29647c]/50 text-[#CDF683]">
         <DialogHeader>
           <DialogTitle>Authentication Required</DialogTitle>
-          <DialogDescription className="text-violet-300/70">
+          <DialogDescription className="text-[#CDF683]/70">
             You need to log in to use this feature and track your SoraRunes.
           </DialogDescription>
         </DialogHeader>
@@ -24,15 +27,15 @@ export default function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           <Button 
             variant="outline" 
             onClick={() => onOpenChange(false)}
-            className="border-violet-700 text-violet-200 hover:bg-violet-800/30"
+            className="border-[#29647c] text-[#CDF683] hover:bg-[#29647c]/30"
           >
             Cancel
           </Button>
           <Button 
             asChild
-            className="bg-violet-700 hover:bg-violet-600 text-white"
+            className="bg-[#29647c] hover:bg-[#29647c]/80 text-white"
           >
-            <Link to="/login" state={{ from: "/ghibli-art" }}>Sign In</Link>
+            <Link to="/login" state={{ from: currentPath }}>Sign In</Link>
           </Button>
         </DialogFooter>
       </DialogContent>

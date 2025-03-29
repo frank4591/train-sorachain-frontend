@@ -56,7 +56,7 @@ export default function Login() {
     
     try {
       await login(values.email, values.password);
-      // Login was successful, navigation handled in AuthProvider
+      // After successful login, AuthProvider will handle navigation
     } catch (err: any) {
       console.error("Login error:", err);
       setError(err.message || "Login failed. Please try again later.");
@@ -66,10 +66,10 @@ export default function Login() {
   };
 
   useEffect(() => {
-    // If redirected from another page, store that location for after login
+    // Store current path for after login, if it's in location state
     if (location.state?.from) {
-      // We already have this in the 'from' variable
-      console.log("Redirected from:", location.state.from);
+      console.log("Will redirect to:", location.state.from);
+      sessionStorage.setItem('redirectPath', location.state.from);
     }
   }, [location]);
 
