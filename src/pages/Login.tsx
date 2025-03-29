@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { useForm } from "react-hook-form";
@@ -35,6 +35,7 @@ export default function Login() {
   const { login, isAuthenticated } = useAuth();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [failedAttempts, setFailedAttempts] = useState(0);
   const navigate = useNavigate();
   const location = useLocation();
   
@@ -60,8 +61,17 @@ export default function Login() {
       console.error("Login error:", err);
       setError(err.message || "Login failed. Please try again later.");
       setIsSubmitting(false);
+      setFailedAttempts(prev => prev + 1);
     }
   };
+
+  useEffect(() => {
+    // If redirected from another page, store that location for after login
+    if (location.state?.from) {
+      // We already have this in the 'from' variable
+      console.log("Redirected from:", location.state.from);
+    }
+  }, [location]);
 
   if (isAuthenticated) {
     // Redirect to the page they were trying to access, or dashboard as fallback
@@ -150,6 +160,14 @@ export default function Login() {
               <Link to="/register" className="font-medium text-primary hover:underline">
                 Sign up
               </Link>
+              
+              {failedAttempts >= 2 && (
+                <div className="mt-3">
+                  <Link to="/reset-password" className="font-medium text-primary hover:underline">
+                    Forgot password? Reset it here
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </BlurredCard>

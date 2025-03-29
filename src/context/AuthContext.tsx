@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase, generateRandomString } from "@/integrations/supabase/client";
@@ -187,11 +186,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (error) throw error;
       
+      // Successfully logged in
       toast.success("Welcome back!");
-      navigate("/dashboard");
+      
+      // Navigate to the requested page or dashboard
+      const storedRedirectPath = sessionStorage.getItem('redirectPath');
+      if (storedRedirectPath) {
+        navigate(storedRedirectPath);
+        sessionStorage.removeItem('redirectPath');
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error: any) {
       toast.error(error.message || "Login failed. Please try again.");
       console.error("Login error:", error);
+      throw error;
     } finally {
       setIsLoading(false);
     }

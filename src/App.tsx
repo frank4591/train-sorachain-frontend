@@ -1,9 +1,10 @@
 
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import { SoraRunesProvider } from "@/context/SoraRunesContext";
 import Index from "./pages/Index";
@@ -22,6 +23,20 @@ import ProtectedLayout from "./components/ProtectedLayout";
 // Create a new QueryClient instance for React Query
 const queryClient = new QueryClient();
 
+// Auth redirection handler component
+const AuthRedirectionHandler = () => {
+  const location = useLocation();
+  
+  useEffect(() => {
+    // Store current path for redirecting after login if needed
+    if (location.pathname !== '/login' && location.pathname !== '/register') {
+      sessionStorage.setItem('redirectPath', location.pathname);
+    }
+  }, [location]);
+  
+  return null;
+};
+
 // The main App component
 const App = () => (
   <BrowserRouter>
@@ -31,6 +46,7 @@ const App = () => (
         <Sonner />
         <AuthProvider>
           <SoraRunesProvider>
+            <AuthRedirectionHandler />
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/login" element={<Login />} />
