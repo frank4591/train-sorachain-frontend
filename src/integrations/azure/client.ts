@@ -9,13 +9,16 @@ interface AzureVisionOptions {
 
 interface ImageGenerationRequest {
   prompt: string;
-  image: string; // Base64 encoded image
+  n: number;
+  size: string;
 }
 
 interface ImageGenerationResponse {
-  output_url?: string;
-  result?: string;
-  image_url?: string;
+  created?: number;
+  data?: {
+    url?: string;
+    revised_prompt?: string;
+  }[];
   error?: {
     message: string;
     code: string;
@@ -31,7 +34,7 @@ export class AzureVisionClient {
     this.endpoint = options.endpoint;
   }
 
-  async generateImage(prompt: string, imageBase64: string): Promise<string | null> {
+  async generateImage(prompt: string, _imageBase64?: string): Promise<string | null> {
     try {
       if (!this.apiKey || !this.endpoint) {
         console.error('Azure API key or endpoint not configured');
@@ -39,10 +42,7 @@ export class AzureVisionClient {
         return null;
       }
 
-      // Extract the base64 content without the data URL prefix if present
-      const base64Data = imageBase64.includes('base64,') 
-        ? imageBase64.split('base64,')[1] 
-        : imageBase64;
+      console.log('Calling Azure OpenAI API with prompt:', prompt);
 
       const response = await fetch(this.endpoint, {
         method: 'POST',
@@ -52,7 +52,8 @@ export class AzureVisionClient {
         },
         body: JSON.stringify({
           prompt,
-          image: base64Data
+          n: 1,
+          size: "1024x1024"
         } as ImageGenerationRequest)
       });
 
@@ -71,17 +72,19 @@ export class AzureVisionClient {
         throw new Error(`Azure API error: ${data.error.code} - ${data.error.message}`);
       }
       
-      // Return the URL to the generated image (considering different response formats)
-      const imageUrl = data.output_url || data.result || data.image_url;
+      // Extract the URL from the DALL-E 3 response format
+      const imageUrl = data.data?.[0]?.url;
       
       if (!imageUrl) {
         toast.error('No image URL in response');
         return null;
       }
       
+      toast.success('Image successfully generated!');
       return imageUrl;
     } catch (error) {
       console.error('Error calling Azure Vision API:', error);
+      toast.error('Failed to generate image: ' + (error instanceof Error ? error.message : 'Unknown error'));
       return null;
     }
   }

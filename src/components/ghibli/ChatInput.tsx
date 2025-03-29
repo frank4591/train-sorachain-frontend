@@ -20,8 +20,8 @@ export default function ChatInput({ onSubmit, isLoading, disabled = false }: Cha
   const handleSubmit = () => {
     if (isLoading || disabled) return;
     
-    if (!imageFile) {
-      toast.error("Please upload an image to generate Ghibli art");
+    if (!message.trim()) {
+      toast.error("Please enter a description for your image");
       return;
     }
     
@@ -92,7 +92,7 @@ export default function ChatInput({ onSubmit, isLoading, disabled = false }: Cha
           disabled={isLoading || disabled}
         >
           <ImagePlus className="h-4 w-4" />
-          <span className="sr-only">Upload image</span>
+          <span className="sr-only">Upload image (optional)</span>
         </Button>
         
         <input
@@ -105,7 +105,7 @@ export default function ChatInput({ onSubmit, isLoading, disabled = false }: Cha
         
         <div className="flex-1 relative">
           <Textarea
-            placeholder="Enter a description for your Ghibli art..."
+            placeholder="Describe what Ghibli-style image you want to generate..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
@@ -121,14 +121,14 @@ export default function ChatInput({ onSubmit, isLoading, disabled = false }: Cha
                 message.trim() === "" ? "opacity-50" : ""
               }`}
               onClick={handleSubmit}
-              disabled={(!message.trim() && !imageFile) || isLoading || disabled}
+              disabled={!message.trim() || isLoading || disabled}
             >
               {isLoading ? (
                 <Loader2 className="h-4 w-4 animate-spin" />
               ) : (
                 <SendHorizontal className="h-4 w-4" />
               )}
-              <span className="sr-only">Send</span>
+              <span className="sr-only">Generate</span>
             </Button>
           </div>
         </div>

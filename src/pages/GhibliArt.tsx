@@ -1,7 +1,6 @@
 
 import { useState } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { Download } from "lucide-react";
 import { toast } from "sonner";
 
 // Custom hooks
@@ -39,9 +38,9 @@ export default function GhibliArt() {
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
   
-  // Azure configuration (these will be set by the user through environment variables)
-  const AZURE_ENDPOINT = import.meta.env.VITE_AZURE_ENDPOINT || "";
-  const AZURE_API_KEY = import.meta.env.VITE_AZURE_API_KEY || "";
+  // Azure configuration - using the directly provided values
+  const AZURE_ENDPOINT = "https://ai-foundry-svc-model.cognitiveservices.azure.com/openai/deployments/dall-e-3/images/generations?api-version=2024-02-01";
+  const AZURE_API_KEY = "TEw4ZX2rQqx2LfXY19XbyZUWxagYgcJ7caEaaeC14XRgKCdUMdbeJQQJ99BCACYeBjFXJ3w3AAAAACOGcnhZ";
   
   // Custom hooks for image generation and sharing
   const { handleImageSubmission } = useImageGeneration({

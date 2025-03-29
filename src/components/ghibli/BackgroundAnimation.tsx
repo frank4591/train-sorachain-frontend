@@ -4,9 +4,9 @@ import React from "react";
 export default function BackgroundAnimation() {
   return (
     <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-      <div className="absolute -top-20 -left-20 w-64 h-64 bg-gray-100/10 rounded-full blur-3xl animate-blob"></div>
-      <div className="absolute top-1/3 -right-20 w-80 h-80 bg-gray-200/10 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
-      <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-gray-100/10 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
+      <div className="absolute -top-20 -left-20 w-64 h-64 bg-gray-50/30 rounded-full blur-3xl animate-blob"></div>
+      <div className="absolute top-1/3 -right-20 w-80 h-80 bg-gray-100/30 rounded-full blur-3xl animate-blob animation-delay-2000"></div>
+      <div className="absolute bottom-1/4 left-1/3 w-72 h-72 bg-gray-50/30 rounded-full blur-3xl animate-blob animation-delay-4000"></div>
       
       <style>
         {`
@@ -24,7 +24,7 @@ export default function BackgroundAnimation() {
           }
           
           .animate-blob {
-            animation: blob 7s infinite ease-in-out;
+            animation: blob 15s infinite ease-in-out;
           }
           
           .animation-delay-2000 {
