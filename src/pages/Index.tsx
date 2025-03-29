@@ -1,15 +1,34 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { BlurredCard } from "@/components/ui/blurred-card";
-import { ChevronRight, Github, BrainCircuit, Cpu, Server, Database } from "lucide-react";
+import { ChevronRight, Github, BrainCircuit, Cpu, Server, Database, Sparkles } from "lucide-react";
+import MarqueeBanner from "@/components/MarqueeBanner";
+
 export default function Index() {
-  const {
-    isAuthenticated
-  } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [scrollY, setScrollY] = useState(0);
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+  
   return <div className="min-h-screen">
+      <MarqueeBanner 
+        text="Try our newest product of our ecosystem, Generate Ghibli art" 
+        buttonText="Generate Art" 
+        buttonLink="/ghibli-art" 
+      />
+      
       <section className="relative min-h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
         <div className="absolute inset-0 -z-10 opacity-40" style={{
         backgroundImage: `radial-gradient(circle at 50% 50%, hsl(var(--primary)/0.3), transparent 70%)`
@@ -36,12 +55,12 @@ export default function Index() {
                 <ChevronRight className="ml-1 h-4 w-4" />
               </Button>
             </Link>
-            <a href="#" target="_blank" rel="noopener noreferrer">
+            <Link to="/ghibli-art">
               <Button variant="outline" size="lg" className="rounded-full">
-                <Github className="mr-1 h-4 w-4" />
-                View on GitHub
+                <Sparkles className="mr-1 h-4 w-4 text-blue-400" />
+                Generate Ghibli Art
               </Button>
-            </a>
+            </Link>
           </div>
         </div>
       </section>
@@ -97,12 +116,20 @@ export default function Index() {
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
             Join our decentralized AI training platform and start contributing to state-of-the-art models.
           </p>
-          <Link to={isAuthenticated ? "/dashboard" : "/register"}>
-            <Button size="lg">
-              {isAuthenticated ? "Go to Dashboard" : "Register Now"}
-              <ChevronRight className="ml-1 h-4 w-4" />
-            </Button>
-          </Link>
+          <div className="flex flex-col sm:flex-row justify-center gap-4">
+            <Link to={isAuthenticated ? "/dashboard" : "/register"}>
+              <Button size="lg">
+                {isAuthenticated ? "Go to Dashboard" : "Register Now"}
+                <ChevronRight className="ml-1 h-4 w-4" />
+              </Button>
+            </Link>
+            <Link to="/ghibli-art">
+              <Button variant="outline" size="lg">
+                <Sparkles className="mr-1 h-4 w-4 text-blue-400" />
+                Try Ghibli Art Generator
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
       
