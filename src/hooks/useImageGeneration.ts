@@ -167,10 +167,10 @@ export const useImageGeneration = ({
           .from('image_submissions')
           .insert({
             user_id: user.id,
-            input_image: inputImageUrl,
+            input_image: inputImageUrl || '',
             input_description: messageText,
             output_image: outputImageUrl,
-            status: 'completed',
+            status: 'approved', // Changed from 'completed' to 'approved' to match the enum type
             is_public: false
           });
         
