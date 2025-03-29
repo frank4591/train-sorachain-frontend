@@ -38,11 +38,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     
     // Set up auth state change listener
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth state changed:", event, session?.user?.id);
+      
       if (event === 'SIGNED_IN' && session) {
         setIsLoading(true);
         const userData = await fetchUserProfile(session.user.id);
         if (userData) {
           setUser(userData);
+          console.log("User profile fetched:", userData);
+        } else {
+          console.log("No user profile found, might be a new registration");
         }
         setIsLoading(false);
       } else if (event === 'SIGNED_OUT') {
@@ -72,6 +77,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       // Navigate to the requested page or dashboard
       const storedRedirectPath = sessionStorage.getItem('redirectPath');
+      console.log("Stored redirect path:", storedRedirectPath);
+      
       if (storedRedirectPath) {
         navigate(storedRedirectPath);
         sessionStorage.removeItem('redirectPath');
@@ -92,6 +99,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setIsLoading(true);
     
     try {
+      console.log("Starting registration process", { email, name });
+      
       // First, sign up the user with Supabase Auth
       const { data, error } = await supabase.auth.signUp({
         email,
@@ -105,8 +114,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       
       if (error) throw error;
       
+      console.log("Registration response:", data);
+      
       // If signup is successful but we need to manually create the profile
-      // This is a fallback in case the database trigger fails
       if (data.user) {
         try {
           // Check if profile already exists
@@ -115,6 +125,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             .select('*')
             .eq('id', data.user.id)
             .single();
+          
+          console.log("Existing profile check:", existingProfile);
             
           if (!existingProfile) {
             // Create profile manually
@@ -126,12 +138,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
                 id: data.user.id,
                 email,
                 name,
-                auth_key: authKey
+                auth_key: authKey,
+                credits: 0,
+                role: 'client'
               });
               
             if (profileError) {
               console.error("Error creating profile:", profileError);
               toast.error("Account created but profile setup failed. Please contact support.");
+            } else {
+              console.log("Profile created successfully");
             }
           }
         } catch (profileErr) {
@@ -140,10 +156,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       }
       
       toast.success("Registration successful!");
-      navigate("/dashboard");
+      
+      // Navigate to dashboard
+      setTimeout(() => {
+        navigate("/dashboard");
+      }, 100);
     } catch (error: any) {
       toast.error(error.message || "Registration failed. Please try again.");
       console.error("Register error:", error);
+      throw error;
     } finally {
       setIsLoading(false);
     }

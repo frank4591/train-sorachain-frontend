@@ -15,10 +15,10 @@ export default function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md bg-[#1a243a] border-[#29647c]/50 text-[#CDF683]">
+      <DialogContent className="sm:max-w-md bg-white border-[#29647c]/30 text-[#29647c]">
         <DialogHeader>
           <DialogTitle>Authentication Required</DialogTitle>
-          <DialogDescription className="text-[#CDF683]/70">
+          <DialogDescription className="text-[#29647c]/70">
             You need to log in to use this feature and track your SoraRunes.
           </DialogDescription>
         </DialogHeader>
@@ -27,7 +27,7 @@ export default function AuthDialog({ open, onOpenChange }: AuthDialogProps) {
           <Button 
             variant="outline" 
             onClick={() => onOpenChange(false)}
-            className="border-[#29647c] text-[#CDF683] hover:bg-[#29647c]/30"
+            className="border-[#29647c]/30 text-[#29647c] hover:bg-[#29647c]/10"
           >
             Cancel
           </Button>
