@@ -25,8 +25,8 @@ export default function Index() {
   return <div className="min-h-screen">
       <MarqueeBanner 
         text="Try our newest product of our ecosystem, Generate Ghibli art" 
-        buttonText="Generate Art" 
-        buttonLink="/ghibli-art" 
+        actionText="Generate Art" 
+        actionUrl="/ghibli-art" 
       />
       
       <section className="relative min-h-screen flex flex-col justify-center items-center px-6 overflow-hidden">

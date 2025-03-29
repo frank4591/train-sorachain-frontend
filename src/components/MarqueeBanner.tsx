@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Sparkles } from 'lucide-react';
 
@@ -19,6 +19,7 @@ export function MarqueeBanner({
   autoClose = false,
   autoCloseDelay = 7000,
 }: MarqueeBannerProps) {
+  const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(true);
   const [hasBeenSeen, setHasBeenSeen] = useState(() => {
     const stored = localStorage.getItem('ghibliMarqueeSeen');
@@ -67,7 +68,7 @@ export function MarqueeBanner({
             variant="secondary" 
             size="sm" 
             className="animate-pulse bg-white text-purple-700 hover:bg-gray-100 font-medium"
-            onClick={() => window.location.href = actionUrl}
+            onClick={() => navigate(actionUrl)}
           >
             <Sparkles className="h-4 w-4 mr-1" />
             {actionText}
@@ -84,15 +85,17 @@ export function MarqueeBanner({
         </Button>
       </div>
       
-      <style jsx>{`
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        .animate-marquee {
-          animation: marquee 30s linear infinite;
-        }
-      `}</style>
+      <style>
+        {`
+          @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+          }
+          .animate-marquee {
+            animation: marquee 30s linear infinite;
+          }
+        `}
+      </style>
     </div>
   );
 }

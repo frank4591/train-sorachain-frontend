@@ -19,14 +19,16 @@ import GhibliArt from "./pages/GhibliArt";
 import NotFound from "./pages/NotFound";
 import ProtectedLayout from "./components/ProtectedLayout";
 
+// Create a new QueryClient instance for React Query
 const queryClient = new QueryClient();
 
+// The main App component
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
         <AuthProvider>
           <SoraRunesProvider>
             <Routes>
@@ -49,9 +51,9 @@ const App = () => (
             </Routes>
           </SoraRunesProvider>
         </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </BrowserRouter>
 );
 
 export default App;
