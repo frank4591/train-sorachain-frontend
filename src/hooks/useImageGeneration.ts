@@ -103,7 +103,7 @@ export const useImageGeneration = ({
     azureApiKey?: string
   ) => {
     try {
-      toast.info('Generating your Ghibli art...');
+      toast.info('Generating your art...');
       
       // Check if Azure credentials are provided
       const hasAzureCredentials = azureEndpoint && azureApiKey;
@@ -121,11 +121,8 @@ export const useImageGeneration = ({
           const azureClient = getAzureVisionClient(azureApiKey, azureEndpoint);
           
           if (azureClient) {
-            // Enhance the prompt with Ghibli style if not already mentioned
-            let enhancedPrompt = messageText;
-            if (!messageText.toLowerCase().includes('ghibli')) {
-              enhancedPrompt = `Create a Studio Ghibli style image of: ${messageText}`;
-            }
+            // Enhance the prompt with artistic instructions
+            let enhancedPrompt = `You are an artist creating anime, toony, Ghibli, or any art form. ${messageText}`;
             
             // Call Azure endpoint
             outputImageUrl = await azureClient.generateImage(enhancedPrompt, inputImageUrl || undefined);
@@ -152,7 +149,7 @@ export const useImageGeneration = ({
       const assistantMessage: Message = {
         id: uuidv4(),
         role: 'assistant',
-        content: 'Here is your Ghibli-style art:',
+        content: 'Here is your generated art:',
         timestamp: new Date(),
         outputImage: outputImageUrl
       };

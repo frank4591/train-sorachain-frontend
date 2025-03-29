@@ -38,9 +38,9 @@ export default function GhibliArt() {
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
   
-  // Azure configuration - using the directly provided values
-  const AZURE_ENDPOINT = "https://ai-foundry-svc-model.cognitiveservices.azure.com/openai/deployments/dall-e-3/images/generations?api-version=2024-02-01";
-  const AZURE_API_KEY = "TEw4ZX2rQqx2LfXY19XbyZUWxagYgcJ7caEaaeC14XRgKCdUMdbeJQQJ99BCACYeBjFXJ3w3AAAAACOGcnhZ";
+  // Azure configuration - using the new Stable Diffusion endpoint
+  const AZURE_ENDPOINT = "https://Stable-Diffusion-3-5-Large-kmkkg.eastus.models.ai.azure.com/images/generations";
+  const AZURE_API_KEY = "Z7ok7Kb59E0sbbZUWgabUKe0G0eDnbBW";
   
   // Custom hooks for image generation and sharing
   const { handleImageSubmission } = useImageGeneration({
@@ -57,7 +57,7 @@ export default function GhibliArt() {
   const downloadImage = (imageUrl: string) => {
     const a = document.createElement('a');
     a.href = imageUrl;
-    a.download = `ghibli-art-${Date.now()}.jpg`;
+    a.download = `sora-art-${Date.now()}.jpg`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -114,7 +114,7 @@ export default function GhibliArt() {
             isLoading={isLoading} 
             onDownload={downloadImage}
           />
-          <ChatInput onSubmit={handleSubmit} isLoading={isLoading} />
+          <ChatInput onSubmit={handleSubmit} isLoading={isLoading} hideImageUpload={true} />
         </main>
       </div>
 

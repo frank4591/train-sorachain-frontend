@@ -24,7 +24,7 @@ export default function Index() {
   
   return <div className="min-h-screen">
       <MarqueeBanner 
-        text="Try our newest product of our ecosystem, Generate Ghibli art" 
+        text="Try our newest product of our ecosystem, Generate Art" 
         actionText="Generate Art" 
         actionUrl="/ghibli-art" 
       />
@@ -58,7 +58,7 @@ export default function Index() {
             <Link to="/ghibli-art">
               <Button variant="outline" size="lg" className="rounded-full">
                 <Sparkles className="mr-1 h-4 w-4 text-blue-400" />
-                Generate Ghibli Art
+                Generate Art
               </Button>
             </Link>
           </div>
@@ -126,7 +126,7 @@ export default function Index() {
             <Link to="/ghibli-art">
               <Button variant="outline" size="lg">
                 <Sparkles className="mr-1 h-4 w-4 text-blue-400" />
-                Try Ghibli Art Generator
+                Try Art Generator
               </Button>
             </Link>
           </div>

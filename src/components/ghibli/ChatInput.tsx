@@ -9,9 +9,15 @@ interface ChatInputProps {
   onSubmit: (message: string, imageFile: File | null) => void;
   isLoading: boolean;
   disabled?: boolean;
+  hideImageUpload?: boolean;
 }
 
-export default function ChatInput({ onSubmit, isLoading, disabled = false }: ChatInputProps) {
+export default function ChatInput({ 
+  onSubmit, 
+  isLoading, 
+  disabled = false, 
+  hideImageUpload = false 
+}: ChatInputProps) {
   const [message, setMessage] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -64,7 +70,7 @@ export default function ChatInput({ onSubmit, isLoading, disabled = false }: Cha
 
   return (
     <div className="p-4 border-t border-gray-200 bg-white">
-      {imagePreview && (
+      {imagePreview && !hideImageUpload && (
         <div className="mb-4 relative group">
           <img
             src={imagePreview}
@@ -83,17 +89,19 @@ export default function ChatInput({ onSubmit, isLoading, disabled = false }: Cha
       )}
       
       <div className="flex items-end gap-2">
-        <Button
-          type="button"
-          variant="outline"
-          size="icon"
-          className="rounded-full flex-shrink-0 border-gray-300 text-gray-700 hover:text-gray-900 hover:bg-gray-100"
-          onClick={() => fileInputRef.current?.click()}
-          disabled={isLoading || disabled}
-        >
-          <ImagePlus className="h-4 w-4" />
-          <span className="sr-only">Upload image (optional)</span>
-        </Button>
+        {!hideImageUpload && (
+          <Button
+            type="button"
+            variant="outline"
+            size="icon"
+            className="rounded-full flex-shrink-0 border-gray-300 text-gray-700 hover:text-gray-900 hover:bg-gray-100"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isLoading || disabled}
+          >
+            <ImagePlus className="h-4 w-4" />
+            <span className="sr-only">Upload image (optional)</span>
+          </Button>
+        )}
         
         <input
           ref={fileInputRef}
@@ -105,7 +113,7 @@ export default function ChatInput({ onSubmit, isLoading, disabled = false }: Cha
         
         <div className="flex-1 relative">
           <Textarea
-            placeholder="Describe what Ghibli-style image you want to generate..."
+            placeholder="Describe what art you want to generate..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}

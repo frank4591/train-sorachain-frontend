@@ -9,8 +9,8 @@ interface AzureVisionOptions {
 
 interface ImageGenerationRequest {
   prompt: string;
-  n: number;
-  size: string;
+  num_images?: number;
+  size?: string;
 }
 
 interface ImageGenerationResponse {
@@ -42,7 +42,7 @@ export class AzureVisionClient {
         return null;
       }
 
-      console.log('Calling Azure OpenAI API with prompt:', prompt);
+      console.log('Calling Azure Stable Diffusion API with prompt:', prompt);
 
       const response = await fetch(this.endpoint, {
         method: 'POST',
@@ -52,7 +52,7 @@ export class AzureVisionClient {
         },
         body: JSON.stringify({
           prompt,
-          n: 1,
+          num_images: 1,
           size: "1024x1024"
         } as ImageGenerationRequest)
       });
@@ -72,7 +72,7 @@ export class AzureVisionClient {
         throw new Error(`Azure API error: ${data.error.code} - ${data.error.message}`);
       }
       
-      // Extract the URL from the DALL-E 3 response format
+      // Extract the URL from the response format
       const imageUrl = data.data?.[0]?.url;
       
       if (!imageUrl) {
@@ -83,7 +83,7 @@ export class AzureVisionClient {
       toast.success('Image successfully generated!');
       return imageUrl;
     } catch (error) {
-      console.error('Error calling Azure Vision API:', error);
+      console.error('Error calling Azure Stable Diffusion API:', error);
       toast.error('Failed to generate image: ' + (error instanceof Error ? error.message : 'Unknown error'));
       return null;
     }

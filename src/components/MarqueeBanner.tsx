@@ -13,7 +13,7 @@ interface MarqueeBannerProps {
 }
 
 export function MarqueeBanner({
-  text = 'Try our newest product of our ecosystem, "Generate Ghibli Art"',
+  text = 'Try our newest product of our ecosystem, "Generate Art"',
   actionText = 'Generate Art',
   actionUrl = '/ghibli-art',
   autoClose = false,
@@ -22,7 +22,7 @@ export function MarqueeBanner({
   const navigate = useNavigate();
   const [isVisible, setIsVisible] = useState(true);
   const [hasBeenSeen, setHasBeenSeen] = useState(() => {
-    const stored = localStorage.getItem('ghibliMarqueeSeen');
+    const stored = localStorage.getItem('artMarqueeSeen');
     return stored ? JSON.parse(stored) : false;
   });
 
@@ -32,7 +32,7 @@ export function MarqueeBanner({
     } else if (autoClose) {
       const timer = setTimeout(() => {
         setIsVisible(false);
-        localStorage.setItem('ghibliMarqueeSeen', JSON.stringify(true));
+        localStorage.setItem('artMarqueeSeen', JSON.stringify(true));
         setHasBeenSeen(true);
       }, autoCloseDelay);
 
