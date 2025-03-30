@@ -69,6 +69,7 @@ export class AzureVisionClient {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'Accept': 'application/json',
             'Ocp-Apim-Subscription-Key': this.apiKey,
             'Access-Control-Allow-Origin': '*'
           },
