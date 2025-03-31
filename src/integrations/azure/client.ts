@@ -9,9 +9,14 @@ interface AzureVisionOptions {
 
 interface ImageGenerationRequest {
   prompt: string;
-  num_images?: number;
+  image_prompt?: {
+    image: string;
+    strength: number;
+  };
+  negative_prompt?: string;
   size?: string;
-  init_image?: string;
+  output_format?: string;
+  seed?: number;
 }
 
 interface ImageGenerationResponse {
@@ -45,11 +50,12 @@ export class AzureVisionClient {
 
       console.log('Calling Azure Stable Diffusion API with prompt:', prompt);
       
-      // Prepare request body
+      // Prepare request body with the correct structure
       const requestBody: ImageGenerationRequest = {
         prompt,
-        num_images: 1,
-        size: "1024x1024"
+        size: "1024x1024",
+        output_format: "png",
+        seed: 0
       };
       
       // Add the image if provided (base64 format)
@@ -58,20 +64,22 @@ export class AzureVisionClient {
         // Extract the base64 data from the dataURL format
         const base64Data = imageBase64.split(',')[1];
         if (base64Data) {
-          requestBody.init_image = base64Data;
+          requestBody.image_prompt = {
+            image: base64Data,
+            strength: 0.8
+          };
         }
       }
 
       // Use a proxy or fallback mechanism to handle CORS issues
       // Option 1: Using a fallback to demo mode if the fetch fails due to CORS
       try {
-        const response = await fetch(this.endpoint, {
+        const response = await fetch(`${this.endpoint}/images/generations`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': 'Bearer ' + this.apiKey,
-            'Access-Control-Allow-Origin': '*'
+            'Ocp-Apim-Subscription-Key': this.apiKey
           },
           mode: 'cors', // Explicitly set CORS mode
           body: JSON.stringify(requestBody)

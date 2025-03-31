@@ -38,9 +38,9 @@ export default function GhibliArt() {
   const [authDialogOpen, setAuthDialogOpen] = useState(false);
   const [mobileSheetOpen, setMobileSheetOpen] = useState(false);
   
-  // Azure configuration - using the correct endpoint
-  const AZURE_ENDPOINT = "https://stable-diff-apim.azure-api.net/images/generations";
-  const AZURE_API_KEY = "Z7ok7Kb59E0sbbZUWgabUKe0G0eDnbBW";
+  // Azure configuration - using the correct endpoint and API key
+  const AZURE_ENDPOINT = "https://stable-diff-apim.azure-api.net";
+  const AZURE_API_KEY = "8bda7dee692b4e2bb7df685e4a628469";
   
   // Custom hooks for image generation and sharing
   const { handleImageSubmission } = useImageGeneration({
