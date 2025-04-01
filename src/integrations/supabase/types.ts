@@ -363,6 +363,7 @@ export type Database = {
     }
     Enums: {
       node_type: "trainer" | "aggregator" | "validator"
+      submission_status: "pending" | "approved" | "rejected"
       task_status: "available" | "in_progress" | "completed" | "failed"
       user_role: "client" | "delegator" | "validator" | "aggregator" | "admin"
     }

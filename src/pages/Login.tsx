@@ -1,17 +1,13 @@
 
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
+import { Link, Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { BlurredCard } from "@/components/ui/blurred-card";
-import { Eye, EyeOff, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { Loader2, AlertCircle } from "lucide-react";
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -20,217 +16,171 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Alert,
-  AlertDescription,
-} from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+import { BlurredCard } from "@/components/ui/blurred-card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
-const loginSchema = z.object({
-  email: z.string().email({ message: "Please enter a valid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+const formSchema = z.object({
+  email: z.string().email({
+    message: "Please enter a valid email address.",
+  }),
+  password: z.string().min(1, {
+    message: "Password is required.",
+  }),
 });
 
-type LoginForm = z.infer<typeof loginSchema>;
+type FormValues = z.infer<typeof formSchema>;
 
 export default function Login() {
-  const { login, isLoading } = useAuth();
-  const [showPassword, setShowPassword] = useState(false);
-  const [emailConfirmationRequired, setEmailConfirmationRequired] = useState(false);
-  const [resendingEmail, setResendingEmail] = useState(false);
+  const { login, isAuthenticated } = useAuth();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [failedAttempts, setFailedAttempts] = useState(0);
+  const navigate = useNavigate();
+  const location = useLocation();
   
-  const form = useForm<LoginForm>({
-    resolver: zodResolver(loginSchema),
+  // Extract the redirect path from location state, default to dashboard
+  const from = location.state?.from || "/dashboard";
+  console.log("Login page, redirect path:", from);
+
+  const form = useForm<FormValues>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       email: "",
       password: "",
     },
   });
-  
-  const onSubmit = async (data: LoginForm) => {
+
+  const onSubmit = async (values: FormValues) => {
+    setIsSubmitting(true);
     setError(null);
-    setEmailConfirmationRequired(false);
     
     try {
-      await login(data.email, data.password);
+      console.log("Attempting login with:", values.email);
+      await login(values.email, values.password);
+      // After successful login, AuthProvider will handle navigation
     } catch (err: any) {
       console.error("Login error:", err);
-      const errorMessage = err.message || "Login failed. Please try again later.";
-      
-      // Check if the error is due to email confirmation
-      if (errorMessage.includes("Email not confirmed") || 
-          errorMessage.includes("Please verify your email")) {
-        setEmailConfirmationRequired(true);
-      } else {
-        setError(errorMessage);
-      }
+      setError(err.message || "Login failed. Please try again later.");
+      setIsSubmitting(false);
+      setFailedAttempts(prev => prev + 1);
     }
   };
-  
-  const handleResendConfirmation = async () => {
-    const email = form.getValues("email");
-    if (!email) {
-      toast.error("Please enter your email address");
-      return;
+
+  useEffect(() => {
+    // Store current path for after login, if it's in location state
+    if (location.state?.from) {
+      console.log("Will redirect to:", location.state.from);
+      sessionStorage.setItem('redirectPath', location.state.from);
     }
-    
-    setResendingEmail(true);
-    
-    try {
-      const { error } = await supabase.auth.resend({
-        type: 'signup',
-        email: email,
-      });
-      
-      if (error) throw error;
-      
-      toast.success("Confirmation email resent. Please check your inbox.");
-    } catch (err: any) {
-      console.error("Resend error:", err);
-      toast.error(err.message || "Failed to resend confirmation email");
-    } finally {
-      setResendingEmail(false);
-    }
-  };
-  
+  }, [location]);
+
+  if (isAuthenticated) {
+    // Redirect to the page they were trying to access, or dashboard as fallback
+    console.log("User is authenticated, redirecting to:", from);
+    return <Navigate to={from} replace />;
+  }
+
   return (
-    <div className="min-h-screen py-20 px-6 flex items-center justify-center bg-background">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
-        <BlurredCard>
-          <div className="p-8">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold">Welcome back</h2>
-              <p className="text-sm text-muted-foreground mt-1">
-                Log in to your SoraChain account
+        <BlurredCard className="w-full">
+          <div className="p-6">
+            <div className="mb-8 text-center">
+              <h1 className="text-2xl font-bold text-[#29647c]">Welcome back</h1>
+              <p className="text-[#29647c]/70 mt-1">
+                Sign in to your account to continue
               </p>
             </div>
-            
+
             {error && (
               <Alert variant="destructive" className="mb-6">
                 <AlertCircle className="h-4 w-4" />
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            
-            {emailConfirmationRequired && (
-              <Alert className="mb-6 border-primary/50 bg-primary/10">
-                <AlertCircle className="h-4 w-4 text-primary" />
-                <AlertDescription className="text-sm">
-                  Please verify your email before logging in.
-                  <Button 
-                    variant="link" 
-                    size="sm" 
-                    onClick={handleResendConfirmation}
-                    disabled={resendingEmail}
-                    className="p-0 h-auto font-medium ml-1"
-                  >
-                    {resendingEmail ? (
-                      <>
-                        <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                        Sending...
-                      </>
-                    ) : (
-                      <>
-                        <RefreshCw className="h-3 w-3 mr-1" />
-                        Resend verification email
-                      </>
-                    )}
-                  </Button>
-                </AlertDescription>
-              </Alert>
-            )}
-            
+
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
                 <FormField
                   control={form.control}
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Email</FormLabel>
+                      <FormLabel className="text-[#29647c]">Email</FormLabel>
                       <FormControl>
-                        <Input
-                          placeholder="your@email.com"
-                          type="email"
-                          {...field}
-                          disabled={isLoading || resendingEmail}
+                        <Input 
+                          type="email" 
+                          placeholder="you@example.com" 
+                          {...field} 
+                          className="border-[#29647c]/30 focus-visible:ring-[#29647c]"
                         />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+
                 <FormField
                   control={form.control}
                   name="password"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Password</FormLabel>
+                      <FormLabel className="text-[#29647c]">Password</FormLabel>
                       <FormControl>
-                        <div className="relative">
-                          <Input
-                            placeholder="••••••••"
-                            type={showPassword ? "text" : "password"}
-                            {...field}
-                            disabled={isLoading || resendingEmail}
-                          />
-                          <Button
-                            type="button"
-                            variant="ghost"
-                            size="icon"
-                            className="absolute right-0 top-0 h-full px-3"
-                            onClick={() => setShowPassword(!showPassword)}
-                            disabled={isLoading || resendingEmail}
-                          >
-                            {showPassword ? (
-                              <EyeOff className="h-4 w-4 text-muted-foreground" />
-                            ) : (
-                              <Eye className="h-4 w-4 text-muted-foreground" />
-                            )}
-                            <span className="sr-only">
-                              {showPassword ? "Hide password" : "Show password"}
-                            </span>
-                          </Button>
-                        </div>
+                        <Input
+                          type="password"
+                          placeholder="Enter your password"
+                          {...field}
+                          className="border-[#29647c]/30 focus-visible:ring-[#29647c]"
+                        />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
                 />
-                
+
                 <Button
                   type="submit"
-                  className="w-full"
-                  disabled={isLoading || resendingEmail}
+                  className="w-full bg-[#29647c] hover:bg-[#29647c]/80 text-white"
+                  disabled={isSubmitting}
                 >
-                  {isLoading ? (
+                  {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Logging in...
+                      Signing in...
                     </>
                   ) : (
-                    "Log in"
+                    "Sign in"
                   )}
                 </Button>
               </form>
             </Form>
-            
-            <div className="mt-6 text-center">
-              <p className="text-sm text-muted-foreground">
-                Don't have an account?{" "}
-                <Link
-                  to="/register"
-                  className="text-primary font-medium hover:underline"
-                >
-                  Register
-                </Link>
-              </p>
+
+            <div className="mt-6 text-center text-sm">
+              <span className="text-[#29647c]/70">
+                Don&apos;t have an account?{" "}
+              </span>
+              <Link 
+                to="/register" 
+                state={{ from: location.state?.from }}
+                className="font-medium text-[#29647c] hover:underline"
+              >
+                Sign up
+              </Link>
+              
+              {failedAttempts >= 2 && (
+                <div className="mt-3">
+                  <Link to="/reset-password" className="font-medium text-[#29647c] hover:underline">
+                    Forgot password? Reset it here
+                  </Link>
+                </div>
+              )}
             </div>
           </div>
         </BlurredCard>

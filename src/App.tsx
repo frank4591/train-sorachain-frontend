@@ -1,9 +1,10 @@
 
+import { useEffect } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
@@ -17,15 +18,32 @@ import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import ProtectedLayout from "./components/ProtectedLayout";
 
+// Create a new QueryClient instance for React Query
 const queryClient = new QueryClient();
 
+// Auth redirection handler component
+const AuthRedirectionHandler = () => {
+  const location = useLocation();
+  
+  useEffect(() => {
+    // Store current path for redirecting after login if needed
+    if (location.pathname !== '/login' && location.pathname !== '/register') {
+      sessionStorage.setItem('redirectPath', location.pathname);
+    }
+  }, [location]);
+  
+  return null;
+};
+
+// The main App component
 const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
+  <BrowserRouter>
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
         <AuthProvider>
+          <AuthRedirectionHandler />
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
@@ -44,9 +62,9 @@ const App = () => (
             <Route path="*" element={<NotFound />} />
           </Routes>
         </AuthProvider>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
+      </TooltipProvider>
+    </QueryClientProvider>
+  </BrowserRouter>
 );
 
 export default App;
