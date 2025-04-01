@@ -6,7 +6,6 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, useLocation, useNavigate } from "react-router-dom";
 import { AuthProvider } from "@/context/AuthContext";
-import { SoraRunesProvider } from "@/context/SoraRunesContext";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
@@ -16,7 +15,6 @@ import Explore from "./pages/Explore";
 import StakeToEarn from "./pages/StakeToEarn";
 import StakeToDevelop from "./pages/StakeToDevelop";
 import AdminDashboard from "./pages/AdminDashboard";
-import GhibliArt from "./pages/GhibliArt";
 import NotFound from "./pages/NotFound";
 import ProtectedLayout from "./components/ProtectedLayout";
 
@@ -45,27 +43,24 @@ const App = () => (
         <Toaster />
         <Sonner />
         <AuthProvider>
-          <SoraRunesProvider>
-            <AuthRedirectionHandler />
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/ghibli-art" element={<GhibliArt />} />
-              
-              {/* Protected routes with navbar */}
-              <Route element={<ProtectedLayout />}>
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/explore" element={<Explore />} />
-                <Route path="/stake-to-earn" element={<StakeToEarn />} />
-                <Route path="/stake-to-develop" element={<StakeToDevelop />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-              </Route>
-              
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </SoraRunesProvider>
+          <AuthRedirectionHandler />
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            
+            {/* Protected routes with navbar */}
+            <Route element={<ProtectedLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/explore" element={<Explore />} />
+              <Route path="/stake-to-earn" element={<StakeToEarn />} />
+              <Route path="/stake-to-develop" element={<StakeToDevelop />} />
+              <Route path="/admin" element={<AdminDashboard />} />
+            </Route>
+            
+            <Route path="*" element={<NotFound />} />
+          </Routes>
         </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>

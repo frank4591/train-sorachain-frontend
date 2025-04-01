@@ -49,13 +49,13 @@ export default function Header({ showSidebar, setShowSidebar, setMobileSheetOpen
               )}
             </Button>
             <h1 className="text-xl font-bold text-gray-900">
-              Ghibli SoraNet
+              Generate Art of your choice
             </h1>
           </div>
           
           <div>
             <p className="text-sm text-gray-600">
-              Transform your images into Ghibli-style masterpieces
+              Generate masterpieces just using prompt
             </p>
           </div>
           

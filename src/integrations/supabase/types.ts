@@ -168,42 +168,6 @@ export type Database = {
           },
         ]
       }
-      image_submissions: {
-        Row: {
-          created_at: string
-          id: string
-          input_description: string | null
-          input_image: string
-          is_public: boolean
-          output_image: string | null
-          status: Database["public"]["Enums"]["submission_status"]
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          input_description?: string | null
-          input_image: string
-          is_public?: boolean
-          output_image?: string | null
-          status?: Database["public"]["Enums"]["submission_status"]
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          input_description?: string | null
-          input_image?: string
-          is_public?: boolean
-          output_image?: string | null
-          status?: Database["public"]["Enums"]["submission_status"]
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: []
-      }
       profiles: {
         Row: {
           auth_key: string | null
@@ -243,36 +207,6 @@ export type Database = {
           phone_number?: string | null
           role?: Database["public"]["Enums"]["user_role"]
           updated_at?: string
-        }
-        Relationships: []
-      }
-      sora_runes: {
-        Row: {
-          created_at: string
-          daily_used_runes: number
-          id: string
-          last_reset_date: string
-          total_runes: number
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          daily_used_runes?: number
-          id?: string
-          last_reset_date?: string
-          total_runes?: number
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          daily_used_runes?: number
-          id?: string
-          last_reset_date?: string
-          total_runes?: number
-          updated_at?: string
-          user_id?: string
         }
         Relationships: []
       }

@@ -4,8 +4,7 @@ import { Link } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { BlurredCard } from "@/components/ui/blurred-card";
-import { ChevronRight, Github, BrainCircuit, Cpu, Server, Database, Sparkles } from "lucide-react";
-import MarqueeBanner from "@/components/MarqueeBanner";
+import { ChevronRight, Github, BrainCircuit, Cpu, Server, Database } from "lucide-react";
 
 export default function Index() {
   const { isAuthenticated } = useAuth();
@@ -23,12 +22,6 @@ export default function Index() {
   }, []);
   
   return <div className="min-h-screen">
-      <MarqueeBanner 
-        text="Try our newest product of our ecosystem, Generate Ghibli art" 
-        actionText="Generate Art" 
-        actionUrl="/ghibli-art" 
-      />
-      
       <section className="relative min-h-screen flex flex-col justify-center items-center px-6 overflow-hidden">
         <div className="absolute inset-0 -z-10 opacity-40" style={{
         backgroundImage: `radial-gradient(circle at 50% 50%, hsl(var(--primary)/0.3), transparent 70%)`
@@ -53,12 +46,6 @@ export default function Index() {
               <Button size="lg" className="rounded-full">
                 {isAuthenticated ? "Go to Dashboard" : "Get Started"}
                 <ChevronRight className="ml-1 h-4 w-4" />
-              </Button>
-            </Link>
-            <Link to="/ghibli-art">
-              <Button variant="outline" size="lg" className="rounded-full">
-                <Sparkles className="mr-1 h-4 w-4 text-blue-400" />
-                Generate Ghibli Art
               </Button>
             </Link>
           </div>
@@ -121,12 +108,6 @@ export default function Index() {
               <Button size="lg">
                 {isAuthenticated ? "Go to Dashboard" : "Register Now"}
                 <ChevronRight className="ml-1 h-4 w-4" />
-              </Button>
-            </Link>
-            <Link to="/ghibli-art">
-              <Button variant="outline" size="lg">
-                <Sparkles className="mr-1 h-4 w-4 text-blue-400" />
-                Try Ghibli Art Generator
               </Button>
             </Link>
           </div>
